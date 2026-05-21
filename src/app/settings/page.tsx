@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/src/components/Icons";
 
 export default function Settings() {
   const [saved, setSaved] = useState(false);

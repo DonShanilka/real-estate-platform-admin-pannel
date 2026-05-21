@@ -7,7 +7,7 @@ import {
   propertyApi as api,
   PropertyStatus,
   PropertyType,
-} from "@/lib/api";
+} from "@/src/lib/api";
 
 export default function AddProperty() {
   const [step, setStep] = useState(1);

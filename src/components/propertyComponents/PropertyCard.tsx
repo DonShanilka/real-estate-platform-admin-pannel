@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Property, PropertyStatus } from "@/lib/api";
+import { Property, PropertyStatus } from "@/src/lib/api";
 
 interface PropertyCardProps {
   property: Property;

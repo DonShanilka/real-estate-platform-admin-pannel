@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { propertyApi, Property } from "@/lib/api";
+import { propertyApi, Property } from "@/src/lib/api";
 
 export const useProperties = () => {
   const [properties, setProperties] = useState<Property[]>([]);

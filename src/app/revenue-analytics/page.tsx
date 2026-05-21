@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/src/components/Icons";
 
 export default function RevenueAnalytics() {
   const [selectedRange, setSelectedRange] = useState("Month-to-Date");
