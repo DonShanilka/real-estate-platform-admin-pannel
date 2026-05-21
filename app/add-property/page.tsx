@@ -2,45 +2,76 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Icons } from "@/components/Icons";
+import {
+  Property,
+  propertyApi as api,
+  PropertyStatus,
+  PropertyType,
+} from "@/lib/api";
 
 export default function AddProperty() {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    price: "",
-    type: "For Sale",
-    category: "Villa",
-    beds: "3",
-    baths: "2",
-    sqft: "1500",
+    price: 0,
+    property_type: PropertyType.VILLA,
+    status: PropertyStatus.AVAILABLE,
+    bedrooms: 3,
+    bathrooms: 2,
+    area_size: 1500,
     address: "",
     city: "",
-    state: "",
-    zip: "",
-    amenities: [] as string[],
+    district: "",
+    country: "USA",
+    latitude: 0,
+    longitude: 0,
+    owner_id: 1,
+    image_url: "",
+    video_url: "",
   });
-
-  const amenitiesList = ["Swimming Pool", "Fitness Gym", "24/7 Security", "Private Parking", "Lush Garden", "High-speed Wifi", "Central AC", "Fireplace"];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const numberFields = ["price", "bedrooms", "bathrooms", "area_size", "latitude", "longitude", "owner_id"];
+    setFormData({ ...formData, [name]: numberFields.includes(name) ? parseFloat(value) || 0 : value });
   };
 
-  const handleCheckboxChange = (amenity: string) => {
-    const isSelected = formData.amenities.includes(amenity);
-    const updated = isSelected
-      ? formData.amenities.filter((item) => item !== amenity)
-      : [...formData.amenities, amenity];
-    setFormData({ ...formData, amenities: updated });
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      const payload: Omit<Property, "id"> = {
+        title: formData.title,
+        description: formData.description || null,
+        price: formData.price,
+        property_type: formData.property_type,
+        status: formData.status,
+        bedrooms: formData.bedrooms,
+        bathrooms: formData.bathrooms,
+        area_size: formData.area_size,
+        address: formData.address,
+        city: formData.city,
+        district: formData.district,
+        country: formData.country,
+        latitude: formData.latitude || null,
+        longitude: formData.longitude || null,
+        owner_id: formData.owner_id,
+        image_url: formData.image_url,
+        video_url: formData.video_url,
+      };
+
+      const saved = await api.saveProperty(payload);
+      if (saved) {
+        setSubmitted(true);
+      }
+    } catch (err) {
+      console.error("Failed to submit property listing:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,7 +88,7 @@ export default function AddProperty() {
           <div className="space-y-2">
             <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">Property Listing Created Successfully!</h3>
             <p className="text-xs text-zinc-400 max-w-md mx-auto">
-              Your property &ldquo;{formData.title || "Untitled Property"}&rdquo; has been registered and is now listed with status <span className="font-semibold text-emerald-600">Active</span> on the platform.
+              Your property &ldquo;{formData.title || "Untitled Property"}&rdquo; has been registered and is now listed with status <span className="font-semibold text-emerald-600">{formData.status}</span> on the platform cloud backend.
             </p>
           </div>
 
@@ -75,17 +106,21 @@ export default function AddProperty() {
                 setFormData({
                   title: "",
                   description: "",
-                  price: "",
-                  type: "For Sale",
-                  category: "Villa",
-                  beds: "3",
-                  baths: "2",
-                  sqft: "1500",
+                  price: 0,
+                  property_type: PropertyType.VILLA,
+                  status: PropertyStatus.AVAILABLE,
+                  bedrooms: 3,
+                  bathrooms: 2,
+                  area_size: 1500,
                   address: "",
                   city: "",
-                  state: "",
-                  zip: "",
-                  amenities: [],
+                  district: "",
+                  country: "USA",
+                  latitude: 0,
+                  longitude: 0,
+                  owner_id: 1,
+                  image_url: "",
+                  video_url: "",
                 });
               }}
               className="px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs font-semibold rounded-xl hover:opacity-90 transition-all"
@@ -137,7 +172,6 @@ export default function AddProperty() {
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Description</label>
                   <textarea
-                    required
                     name="description"
                     rows={4}
                     value={formData.description}
@@ -149,45 +183,61 @@ export default function AddProperty() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Listing Price</label>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Listing Price ($)</label>
                     <input
-                      type="text"
+                      type="number"
                       required
                       name="price"
                       value={formData.price}
                       onChange={handleInputChange}
-                      placeholder="e.g. $850,000 or $3,500/mo"
+                      placeholder="e.g. 850000"
                       className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Listing Mode</label>
-                    <select
-                      name="type"
-                      value={formData.type}
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Owner ID</label>
+                    <input
+                      type="number"
+                      required
+                      name="owner_id"
+                      value={formData.owner_id}
                       onChange={handleInputChange}
+                      placeholder="e.g. 1"
                       className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                    >
-                      <option value="For Sale">For Sale</option>
-                      <option value="For Rent">For Rent</option>
-                    </select>
+                    />
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Category Typology</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                  >
-                    <option value="Villa">Villa</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Penthouse">Penthouse</option>
-                    <option value="House">House</option>
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Property Type</label>
+                    <select
+                      name="property_type"
+                      value={formData.property_type}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+                    >
+                      <option value={PropertyType.APARTMENT}>Apartment</option>
+                      <option value={PropertyType.HOUSE}>House</option>
+                      <option value={PropertyType.LAND}>Land</option>
+                      <option value={PropertyType.VILLA}>Villa</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Availability Status</label>
+                    <select
+                      name="status"
+                      value={formData.status}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+                    >
+                      <option value={PropertyStatus.AVAILABLE}>Available</option>
+                      <option value={PropertyStatus.SOLD}>Sold</option>
+                      <option value={PropertyStatus.RENTED}>Rented</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             )}
@@ -223,27 +273,27 @@ export default function AddProperty() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">State / Region</label>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">District / County</label>
                     <input
                       type="text"
                       required
-                      name="state"
-                      value={formData.state}
+                      name="district"
+                      value={formData.district}
                       onChange={handleInputChange}
-                      placeholder="FL"
+                      placeholder="Miami-Dade"
                       className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Zip Code</label>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Country</label>
                     <input
                       type="text"
                       required
-                      name="zip"
-                      value={formData.zip}
+                      name="country"
+                      value={formData.country}
                       onChange={handleInputChange}
-                      placeholder="33101"
+                      placeholder="USA"
                       className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
                     />
                   </div>
@@ -255,8 +305,8 @@ export default function AddProperty() {
                     <input
                       type="number"
                       required
-                      name="beds"
-                      value={formData.beds}
+                      name="bedrooms"
+                      value={formData.bedrooms}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
                     />
@@ -267,20 +317,20 @@ export default function AddProperty() {
                     <input
                       type="number"
                       required
-                      name="baths"
-                      value={formData.baths}
+                      name="bathrooms"
+                      value={formData.bathrooms}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Area Sqft</label>
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Area size (sqft)</label>
                     <input
                       type="number"
                       required
-                      name="sqft"
-                      value={formData.sqft}
+                      name="area_size"
+                      value={formData.area_size}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
                     />
@@ -290,40 +340,59 @@ export default function AddProperty() {
             )}
 
             {step === 3 && (
-              /* Step 3: Amenities & Photos */
+              /* Step 3: Media & Coordinates */
               <div className="space-y-5 animate-in fade-in duration-200">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Select Included Amenities</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {amenitiesList.map((amenity) => {
-                      const isChecked = formData.amenities.includes(amenity);
-                      return (
-                        <button
-                          type="button"
-                          key={amenity}
-                          onClick={() => handleCheckboxChange(amenity)}
-                          className={`p-2.5 text-xs font-semibold rounded-xl border text-center transition-all ${
-                            isChecked
-                              ? "bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100"
-                              : "bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                          }`}
-                        >
-                          {amenity}
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Image URL</label>
+                  <input
+                    type="text"
+                    required
+                    name="image_url"
+                    value={formData.image_url}
+                    onChange={handleInputChange}
+                    placeholder="http://domain.com/photo.jpg"
+                    className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+                  />
                 </div>
 
-                {/* Drag and Drop Zone Simulator */}
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Upload Property Media</label>
-                  <div className="border-2 border-dashed border-zinc-200 rounded-2xl p-6 text-center hover:border-zinc-300 transition-all dark:border-zinc-700 dark:hover:border-zinc-600">
-                    <svg className="w-8 h-8 text-zinc-400 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 block">Drag images here or browse files</span>
-                    <span className="text-[10px] text-zinc-400 block mt-0.5">Supports high-res PNG, JPG up to 10MB</span>
+                  <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Video Walkthrough URL</label>
+                  <input
+                    type="text"
+                    required
+                    name="video_url"
+                    value={formData.video_url}
+                    onChange={handleInputChange}
+                    placeholder="http://domain.com/walkthrough.mp4"
+                    className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Latitude (optional)</label>
+                    <input
+                      type="number"
+                      step="any"
+                      name="latitude"
+                      value={formData.latitude}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 25.7617"
+                      className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Longitude (optional)</label>
+                    <input
+                      type="number"
+                      step="any"
+                      name="longitude"
+                      value={formData.longitude}
+                      onChange={handleInputChange}
+                      placeholder="e.g. -80.1918"
+                      className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+                    />
                   </div>
                 </div>
               </div>
@@ -354,8 +423,15 @@ export default function AddProperty() {
               ) : (
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-gradient-to-r from-rose-600 to-amber-500 text-white text-xs font-semibold rounded-xl hover:opacity-90 shadow-md shadow-rose-500/10 transition-all ml-auto"
+                  disabled={loading}
+                  className="px-4 py-2 bg-gradient-to-r from-rose-600 to-amber-500 text-white text-xs font-semibold rounded-xl hover:opacity-90 shadow-md shadow-rose-500/10 transition-all ml-auto flex items-center gap-2"
                 >
+                  {loading && (
+                    <svg className="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
                   Submit Listing
                 </button>
               )}
