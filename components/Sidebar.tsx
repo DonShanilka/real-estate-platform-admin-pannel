@@ -24,9 +24,8 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`bg-zinc-950 text-zinc-100 flex flex-col border-r border-zinc-800 transition-all duration-300 ${
-        collapsed ? "w-20" : "w-64"
-      } shrink-0 h-screen sticky top-0`}
+      className={`bg-zinc-950 text-zinc-100 flex flex-col border-r border-zinc-800 transition-all duration-300 ${collapsed ? "w-20" : "w-64"
+        } shrink-0 h-screen sticky top-0`}
     >
       {/* Brand Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-zinc-800">
@@ -77,16 +76,14 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${
-                isActive
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${isActive
                   ? "bg-gradient-to-r from-rose-600 to-amber-500 text-white shadow-md shadow-rose-950/20"
                   : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900"
-              }`}
+                }`}
             >
               <Icon
-                className={`transition-transform duration-200 group-hover:scale-110 ${
-                  isActive ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"
-                }`}
+                className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"
+                  }`}
               />
 
               {!collapsed && (
@@ -95,13 +92,12 @@ export function Sidebar() {
 
               {!collapsed && item.badge && (
                 <span
-                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                    item.badge === "New"
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${item.badge === "New"
                       ? "bg-rose-500 text-white"
                       : isActive
-                      ? "bg-white/20 text-white"
-                      : "bg-zinc-800 text-zinc-400 group-hover:bg-zinc-700"
-                  }`}
+                        ? "bg-white/20 text-white"
+                        : "bg-zinc-800 text-zinc-400 group-hover:bg-zinc-700"
+                    }`}
                 >
                   {item.badge}
                 </span>
@@ -122,9 +118,8 @@ export function Sidebar() {
       {/* User Session Quick Profile */}
       <div className="p-3 border-t border-zinc-800">
         <div
-          className={`flex items-center gap-3 ${
-            collapsed ? "justify-center" : "px-3 py-2 bg-zinc-900/50 rounded-lg border border-zinc-900"
-          }`}
+          className={`flex items-center gap-3 ${collapsed ? "justify-center" : "px-3 py-2 bg-zinc-900/50 rounded-lg border border-zinc-900"
+            }`}
         >
           <div className="w-8 h-8 rounded-full overflow-hidden border border-rose-500/30 flex items-center justify-center bg-zinc-800 text-xs font-bold text-rose-400 shrink-0">
             JD

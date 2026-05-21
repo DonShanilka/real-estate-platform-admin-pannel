@@ -326,31 +326,59 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
 
           {/* Media Links */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">4. Media links</h4>
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Image URL</label>
-                <input
-                  type="text"
-                  name="image_url"
-                  value={formData.image_url}
-                  onChange={handleChange}
-                  placeholder="http://domain.com/photo.jpg"
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
+            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              4. Media Uploads
+            </h4>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Video Walkthrough URL</label>
-                <input
-                  type="text"
-                  name="video_url"
-                  value={formData.video_url}
-                  onChange={handleChange}
-                  placeholder="http://domain.com/tour.mp4"
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+            {/* IMAGE */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                Property Image
+              </label>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium
+      file:mr-4 file:px-3 file:py-1.5 file:border-0
+      file:bg-blue-600 file:text-white file:rounded-lg
+      dark:bg-zinc-800 dark:border-zinc-700"
+              />
+
+              {formData.image_url && (
+                <img
+                  src={formData.image_url}
+                  alt="Preview"
+                  className="w-full h-40 object-cover rounded-lg border"
                 />
-              </div>
+              )}
+            </div>
+
+            {/* VIDEO */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                Property Video
+              </label>
+
+              <input
+                type="file"
+                accept="video/*"
+                onChange={handleVideoUpload}
+                className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium
+      file:mr-4 file:px-3 file:py-1.5 file:border-0
+      file:bg-green-600 file:text-white file:rounded-lg
+      dark:bg-zinc-800 dark:border-zinc-700"
+              />
+
+              {formData.video_url && (
+                <video
+                  controls
+                  className="w-full rounded-lg border"
+                >
+                  <source src={formData.video_url} />
+                </video>
+              )}
             </div>
           </div>
         </form>
