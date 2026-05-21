@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Property, PropertyType, PropertyStatus } from "@/src/lib/api";
+import Input from "../ui/Input";
 
 interface PropertyFormModalProps {
   isOpen: boolean;
@@ -32,8 +33,6 @@ export function PropertyFormModal({
     latitude: 0,
     longitude: 0,
     owner_id: 1,
-    image_url: "",
-    video_url: "",
   });
 
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -57,8 +56,6 @@ export function PropertyFormModal({
         latitude: property.latitude || 0,
         longitude: property.longitude || 0,
         owner_id: property.owner_id || 1,
-        image_url: property.image_url || "",
-        video_url: property.video_url || "",
       });
     }
   }, [property]);
@@ -88,6 +85,7 @@ export function PropertyFormModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
     onSave({
       ...property,
       ...formData,
@@ -143,7 +141,15 @@ export function PropertyFormModal({
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
               1. General Details
             </h4>
-            <div className="space-y-1">
+            <Input lable="Property Title" type="text"
+                required
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="e.g. Oceanfront Glass Penthouse"
+              />
+                
+            {/* <div className="space-y-1">
               <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
                 Property Title
               </label>
@@ -156,7 +162,7 @@ export function PropertyFormModal({
                 placeholder="e.g. Oceanfront Glass Penthouse"
                 className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
               />
-            </div>
+            </div> */}
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
