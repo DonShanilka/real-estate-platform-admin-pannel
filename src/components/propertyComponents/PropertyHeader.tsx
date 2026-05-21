@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/src/components/Icons";
 
 interface Props {
   total: number;

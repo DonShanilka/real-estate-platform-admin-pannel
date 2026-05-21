@@ -1,7 +1,7 @@
 import {
   Property,
   PropertyStatus,
-} from "@/lib/api";
+} from "@/src/lib/api";
 
 export const filterProperties = (
   properties: Property[],
