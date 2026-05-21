@@ -154,7 +154,7 @@ export default function AddProperty() {
 
           <form onSubmit={handleFormSubmit} className="p-6 sm:p-8 space-y-6">
             {step === 1 && (
-              /* Step 1: General Info */
+              /* General Info */
               <div className="space-y-4 animate-in fade-in duration-200">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Property Title</label>
@@ -243,7 +243,7 @@ export default function AddProperty() {
             )}
 
             {step === 2 && (
-              /* Step 2: Location & Size */
+              /* Location & Size */
               <div className="space-y-4 animate-in fade-in duration-200">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Street Address</label>

@@ -16,38 +16,32 @@ import {
 
 export default function PropertyManagement() {
   const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => { setSearchQuery(e.target.value) };
   const [activeTab, setActiveTab] = useState<
     "All" | "Active" | "Pending" | "Sold"
   >("All");
 
-  const [categoryFilter, setCategoryFilter] =
-    useState<string>("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
 
-  // Modal states
-  const [isModalOpen, setIsModalOpen] =
-    useState<boolean>(false);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProperty, setEditingProperty] =
     useState<Property | null>(null);
 
-  // =========================================
-  // FETCH PROPERTIES
-  // =========================================
+
   const fetchProperties = async () => {
     try {
       setLoading(true);
 
-      const data = await api.getAllProperties();
+      const response = await api.getAllProperties();
 
-      if (Array.isArray(data)) {
-        setProperties(data);
-      } else {
-        setProperties([]);
-      }
+      console.log("RAW API RESPONSE:", response);
+
+      const data: Property[] = Array.isArray(response) ? response : response?.data || [];
+
+      setProperties(data);
     } catch (error) {
       console.error("Failed to load properties:", error);
       setProperties([]);
@@ -60,120 +54,94 @@ export default function PropertyManagement() {
     fetchProperties();
   }, []);
 
-  // =========================================
-  // SEARCH
-  // =========================================
-  const handleSearch = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchQuery(e.target.value);
-  };
 
-  // =========================================
-  // DELETE PROPERTY
-  // =========================================
   const handleDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this property?"
+    );
+
+    if (!confirmed) return;
+
     try {
-      const confirmed = window.confirm(
-        "Are you sure you want to delete this property listing?"
+      await api.deleteProperty(id);
+
+      setProperties((prev) =>
+        prev.filter((p) => p.id !== id)
       );
-
-      if (!confirmed) return;
-
-      const success = await api.deleteProperty(id);
-
-      if (success) {
-        setProperties((prev) =>
-          prev.filter((property) => property.id !== id)
-        );
-      }
     } catch (error) {
-      console.error("Failed to delete property:", error);
+      console.error("Delete failed:", error);
     }
   };
 
-  // =========================================
-  // OPEN EDIT MODAL
-  // =========================================
+
   const handleEditTrigger = (property: Property) => {
     setEditingProperty(property);
     setIsModalOpen(true);
   };
 
-  // =========================================
-  // SAVE UPDATED PROPERTY
-  // =========================================
+
   const handleSaveProperty = async (
     updatedProperty: Property
   ) => {
-    try {
-      if (!updatedProperty.id) return;
+    if (!updatedProperty.id) return;
 
-      const savedProperty = await api.updateProperty(
+    try {
+      const saved = await api.updateProperty(
         updatedProperty.id,
         updatedProperty
       );
 
       setProperties((prev) =>
-        prev.map((property) =>
-          property.id === savedProperty.id
-            ? savedProperty
-            : property
+        prev.map((p) =>
+          p.id === saved.id ? saved : p
         )
       );
 
       setIsModalOpen(false);
       setEditingProperty(null);
     } catch (error) {
-      console.error(
-        "Failed to update property:",
-        error
-      );
+      console.error("Update failed:", error);
     }
   };
 
-  // =========================================
-  // FILTER PROPERTIES
-  // =========================================
-  const filteredProperties = properties.filter((property) => {
+
+  const filteredProperties = properties.filter((p) => {
     const query = searchQuery.toLowerCase();
 
+    const title = p.title?.toLowerCase() || "";
+    const address = p.address?.toLowerCase() || "";
+    const city = p.city?.toLowerCase() || "";
+    const type = p.property_type?.toString().toLowerCase() || "";
+    const id = p.id?.toString() || "";
+
     const matchesSearch =
-      property.title.toLowerCase().includes(query) ||
-      property.address?.toLowerCase().includes(query) ||
-      property.city?.toLowerCase().includes(query) ||
-      property.id?.toString().includes(query) ||
-      property.property_type
-        .toLowerCase()
-        .includes(query);
+      title.includes(query) ||
+      address.includes(query) ||
+      city.includes(query) ||
+      type.includes(query) ||
+      id.includes(query);
 
     let matchesTab = true;
 
     if (activeTab === "Active") {
-      matchesTab =
-        property.status === PropertyStatus.AVAILABLE;
+      matchesTab = p.status === PropertyStatus.AVAILABLE;
     }
 
     if (activeTab === "Pending") {
-      matchesTab =
-        property.status === PropertyStatus.RENTED;
+      matchesTab = p.status === PropertyStatus.RENTED;
     }
 
     if (activeTab === "Sold") {
-      matchesTab =
-        property.status === PropertyStatus.SOLD;
+      matchesTab = p.status === PropertyStatus.SOLD;
     }
 
     const matchesCategory =
       categoryFilter === "All" ||
-      property.property_type === categoryFilter;
+      p.property_type === categoryFilter;
 
-    return (
-      matchesSearch &&
-      matchesTab &&
-      matchesCategory
-    );
+    return matchesSearch && matchesTab && matchesCategory;
   });
+
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -204,19 +172,18 @@ export default function PropertyManagement() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                activeTab === tab
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${activeTab === tab
                   ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow"
                   : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-              }`}
+                }`}
             >
               {tab === "Active"
                 ? "Available"
                 : tab === "Pending"
-                ? "Rented"
-                : tab === "Sold"
-                ? "Sold"
-                : "All Properties"}
+                  ? "Rented"
+                  : tab === "Sold"
+                    ? "Sold"
+                    : "All Properties"}
             </button>
           ))}
         </div>

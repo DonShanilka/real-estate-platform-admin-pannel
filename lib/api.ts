@@ -1,4 +1,3 @@
-// src/services/property-api.ts
 
 export enum PropertyType {
   APARTMENT = "APARTMENT",
@@ -34,113 +33,67 @@ export interface Property {
   video_url: string;
 }
 
-const BASE_URL = "http://127.0.0.1:8000/properties";
+const BASE_URL = "http://127.0.0.1:8000";
 
-// FALLBACK DATABASE
+// FALLBACK DB KEY
+const STORAGE_KEY = "estate_properties";
 
-const fallbackProperties: Property[] = [
-  {
-    id: 1,
-    title: "Luxury Ocean View Apartment",
-    description:
-      "Beautiful apartment with ocean views and modern interiors.",
-    price: 250000,
-    property_type: PropertyType.APARTMENT,
-    status: PropertyStatus.AVAILABLE,
-    bedrooms: 3,
-    bathrooms: 2,
-    area_size: 1800,
-    address: "12 Palm Street",
-    city: "Colombo",
-    district: "Western",
-    country: "Sri Lanka",
-    latitude: 6.9271,
-    longitude: 79.8612,
-    owner_id: 1,
-    image_url:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
-    video_url: "",
-  },
-  {
-    id: 2,
-    title: "Modern Family House",
-    description:
-      "Spacious family house with garden and parking.",
-    price: 180000,
-    property_type: PropertyType.HOUSE,
-    status: PropertyStatus.AVAILABLE,
-    bedrooms: 4,
-    bathrooms: 3,
-    area_size: 2400,
-    address: "45 Green Avenue",
-    city: "Kandy",
-    district: "Central",
-    country: "Sri Lanka",
-    latitude: 7.2906,
-    longitude: 80.6337,
-    owner_id: 2,
-    image_url:
-      "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
-    video_url: "",
-  },
-];
-
+// FALLBACK DB
 const getFallbackDB = (): Property[] => {
-  if (typeof window === "undefined") return fallbackProperties;
+  if (typeof window === "undefined") return [];
 
-  const stored = localStorage.getItem("estate_properties");
+  const stored = localStorage.getItem(STORAGE_KEY);
 
   if (stored) {
     try {
       return JSON.parse(stored);
-    } catch (error) {
-      return fallbackProperties;
+    } catch {
+      return [];
     }
   }
 
   localStorage.setItem(
-    "estate_properties",
-    JSON.stringify(fallbackProperties)
+    STORAGE_KEY,
+    JSON.stringify([])
   );
 
-  return fallbackProperties;
+  return [];
 };
 
 const saveFallbackDB = (data: Property[]) => {
   if (typeof window !== "undefined") {
-    localStorage.setItem("estate_properties", JSON.stringify(data));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(data)
+    );
   }
 };
 
 
-
+// API
 export const propertyApi = {
-
-  // GET ALL PROPERTIES
-
+  // GET ALL
   async getAllProperties(): Promise<Property[]> {
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/properties/getAllProperty",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `${BASE_URL}/properties/getAllProperty`
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch properties");
+        throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("All properties:", data);
+
+      // save cache
+      saveFallbackDB(data);
+
+      console.log("API Properties:", data);
 
       return data;
     } catch (error) {
-      console.warn(
-        "Backend unavailable. Using localStorage fallback.",
+      console.error(
+        "Backend unavailable. Using fallback.",
         error
       );
 
@@ -148,49 +101,33 @@ export const propertyApi = {
     }
   },
 
-
-  // GET PROPERTY BY ID
-
-  async getPropertyById(id: number): Promise<Property | null> {
+  // GET BY ID
+  async getPropertyById(
+    id: number
+  ): Promise<Property | null> {
     try {
       const response = await fetch(
-        `${BASE_URL}/getById/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `${BASE_URL}/properties/getById/${id}`
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch property");
+        throw new Error("Failed to fetch");
       }
 
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.warn(
-        `Backend unavailable. Using localStorage fallback for property ${id}`,
-        error
-      );
-
+      return await response.json();
+    } catch {
       const db = getFallbackDB();
-
-      return db.find((item) => item.id === id) || null;
+      return db.find((p) => p.id === id) || null;
     }
   },
 
-
-  // SAVE PROPERTY
-
+  // SAVE
   async saveProperty(
     property: Omit<Property, "id">
   ): Promise<Property> {
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/properties/saveProperty",
+        `${BASE_URL}/properties/saveProperty`,
         {
           method: "POST",
           headers: {
@@ -201,18 +138,11 @@ export const propertyApi = {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to save property");
+        throw new Error("Save failed");
       }
 
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.warn(
-        "Backend unavailable. Saving to localStorage.",
-        error
-      );
-
+      return await response.json();
+    } catch {
       const db = getFallbackDB();
 
       const newId =
@@ -225,24 +155,21 @@ export const propertyApi = {
         id: newId,
       };
 
-      const updatedDB = [...db, newProperty];
-
-      saveFallbackDB(updatedDB);
+      const updated = [...db, newProperty];
+      saveFallbackDB(updated);
 
       return newProperty;
     }
   },
 
-
-  // UPDATE PROPERTY
-
+  // UPDATE
   async updateProperty(
     id: number,
     property: Partial<Property>
   ): Promise<Property> {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/properties/updateProperty/${id}`,
+        `${BASE_URL}/properties/updateProperty/${id}`,
         {
           method: "PUT",
           headers: {
@@ -253,70 +180,43 @@ export const propertyApi = {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to update property");
+        throw new Error("Update failed");
       }
 
-      const data = await response.json();
-
-      return data;
-    } catch (error) {
-      console.warn(
-        `Backend unavailable. Updating property ${id} in localStorage.`,
-        error
-      );
-
+      return await response.json();
+    } catch {
       const db = getFallbackDB();
 
-      const updatedProperties = db.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            ...property,
-          };
-        }
+      const updated = db.map((p) =>
+        p.id === id ? { ...p, ...property } : p
+      );
 
-        return item;
-      });
+      saveFallbackDB(updated);
 
-      saveFallbackDB(updatedProperties);
-
-      return updatedProperties.find(
-        (item) => item.id === id
-      ) as Property;
+      return updated.find((p) => p.id === id)!;
     }
   },
 
-
-  // DELETE PROPERTY
-
+  // DELETE
   async deleteProperty(id: number): Promise<boolean> {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/properties/deleteProperty/${id}`,
+        `${BASE_URL}/properties/deleteProperty/${id}`,
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete property");
+        throw new Error("Delete failed");
       }
 
       return true;
-    } catch (error) {
-      console.warn(
-        `Backend unavailable. Deleting property ${id} from localStorage.`,
-        error
-      );
-
+    } catch {
       const db = getFallbackDB();
 
-      const updatedDB = db.filter((item) => item.id !== id);
-
-      saveFallbackDB(updatedDB);
+      const updated = db.filter((p) => p.id !== id);
+      saveFallbackDB(updated);
 
       return true;
     }
