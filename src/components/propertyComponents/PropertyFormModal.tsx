@@ -10,7 +10,12 @@ interface PropertyFormModalProps {
   onSave: (property: Property) => void;
 }
 
-export function PropertyFormModal({ isOpen, onClose, property, onSave }: PropertyFormModalProps) {
+export function PropertyFormModal({
+  isOpen,
+  onClose,
+  property,
+  onSave,
+}: PropertyFormModalProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -30,6 +35,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
     image_url: "",
     video_url: "",
   });
+
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [image, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (property) {
@@ -57,9 +65,21 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
 
   if (!isOpen) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    const numberFields = ["price", "bedrooms", "bathrooms", "area_size", "latitude", "longitude", "owner_id"];
+    const numberFields = [
+      "price",
+      "bedrooms",
+      "bathrooms",
+      "area_size",
+      "latitude",
+      "longitude",
+      "owner_id",
+    ];
     setFormData((prev) => ({
       ...prev,
       [name]: numberFields.includes(name) ? parseFloat(value) || 0 : value,
@@ -82,10 +102,14 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
         <div className="bg-zinc-950 text-white p-5 border-b border-zinc-850 flex justify-between items-center shrink-0">
           <div>
             <h3 className="text-sm font-extrabold uppercase tracking-wider text-rose-500">
-              {property ? "Update Property Listing" : "Register Property Listing"}
+              {property
+                ? "Update Property Listing"
+                : "Register Property Listing"}
             </h3>
             <p className="text-[10px] text-zinc-400 mt-0.5">
-              {property ? `Listing ID: #${property.id}` : "Provide details for the new listing"}
+              {property
+                ? `Listing ID: #${property.id}`
+                : "Provide details for the new listing"}
             </p>
           </div>
           <button
@@ -110,12 +134,19 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
         </div>
 
         {/* Scrollable form content */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-6 space-y-6"
+        >
           {/* General Information */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">1. General Details</h4>
+            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              1. General Details
+            </h4>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Property Title</label>
+              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                Property Title
+              </label>
               <input
                 type="text"
                 required
@@ -128,7 +159,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Description</label>
+              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                Description
+              </label>
               <textarea
                 name="description"
                 rows={3}
@@ -141,7 +174,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Price ($)</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Price ($)
+                </label>
                 <input
                   type="number"
                   required
@@ -153,7 +188,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Property Type</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Property Type
+                </label>
                 <select
                   name="property_type"
                   value={formData.property_type}
@@ -168,7 +205,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Availability Status</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Availability Status
+                </label>
                 <select
                   name="status"
                   value={formData.status}
@@ -187,9 +226,13 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
 
           {/* Location details */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">2. Address & Geolocation</h4>
+            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              2. Address & Geolocation
+            </h4>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Street Address</label>
+              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                Street Address
+              </label>
               <input
                 type="text"
                 required
@@ -203,7 +246,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">City</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  City
+                </label>
                 <input
                   type="text"
                   required
@@ -215,7 +260,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">District</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  District
+                </label>
                 <input
                   type="text"
                   required
@@ -227,7 +274,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Country</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Country
+                </label>
                 <input
                   type="text"
                   required
@@ -239,7 +288,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Owner ID</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Owner ID
+                </label>
                 <input
                   type="number"
                   required
@@ -253,7 +304,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Latitude (optional)</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Latitude (optional)
+                </label>
                 <input
                   type="number"
                   step="any"
@@ -265,7 +318,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Longitude (optional)</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Longitude (optional)
+                </label>
                 <input
                   type="number"
                   step="any"
@@ -282,10 +337,14 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
 
           {/* Size & details */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">3. Size & Capacity Parameters</h4>
+            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              3. Size & Capacity Parameters
+            </h4>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Bedrooms</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Bedrooms
+                </label>
                 <input
                   type="number"
                   required
@@ -297,7 +356,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Bathrooms</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Bathrooms
+                </label>
                 <input
                   type="number"
                   required
@@ -309,7 +370,9 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">Area size (sqft)</label>
+                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
+                  Area size (sqft)
+                </label>
                 <input
                   type="number"
                   required
@@ -339,7 +402,7 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={setImageFile as any}
                 className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium
       file:mr-4 file:px-3 file:py-1.5 file:border-0
       file:bg-blue-600 file:text-white file:rounded-lg
@@ -364,7 +427,7 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               <input
                 type="file"
                 accept="video/*"
-                onChange={handleVideoUpload}
+                onChange={setVideoFile as any}
                 className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium
       file:mr-4 file:px-3 file:py-1.5 file:border-0
       file:bg-green-600 file:text-white file:rounded-lg
@@ -372,10 +435,7 @@ export function PropertyFormModal({ isOpen, onClose, property, onSave }: Propert
               />
 
               {formData.video_url && (
-                <video
-                  controls
-                  className="w-full rounded-lg border"
-                >
+                <video controls className="w-full rounded-lg border">
                   <source src={formData.video_url} />
                 </video>
               )}
