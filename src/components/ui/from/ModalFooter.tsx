@@ -14,7 +14,7 @@ export default function ModalFooter({
   loading = false,
 }: ModalFooterProps) {
   return (
-    <div className="bg-zinc-50 px-6 py-4 border-t border-zinc-200 flex justify-end gap-3 shrink-0 dark:bg-zinc-850 dark:border-zinc-800">
+    <div className="bg-zinc-950 px-6 py-4 border-t border-zinc-200 flex justify-end gap-3 shrink-0 dark:bg-zinc-850 dark:border-zinc-800">
       <button
         type="button"
         onClick={onClose}

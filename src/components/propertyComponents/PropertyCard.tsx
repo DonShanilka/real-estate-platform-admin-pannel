@@ -24,8 +24,7 @@ export default function PropertyCard({
       ? `$${price.toLocaleString()}`
       : `$${price.toLocaleString()}/mo`;
 
-  const imageUrl =
-    property.image_url?.trim() || FALLBACK_IMAGE;
+  const imageUrl = property.image_url?.trim() || FALLBACK_IMAGE;
 
   const status = property.status;
 
@@ -44,9 +43,7 @@ export default function PropertyCard({
     },
   };
 
-  const currentStatus =
-    statusConfig[status] ??
-    statusConfig.AVAILABLE;
+  const currentStatus = statusConfig[status] ?? statusConfig.AVAILABLE;
 
   const typeText =
     property.property_type.charAt(0) +
@@ -58,8 +55,8 @@ export default function PropertyCard({
     ownerId === 1
       ? "Sarah Jenkins"
       : ownerId === 2
-      ? "Alex Rivera"
-      : "Emma Watson";
+        ? "Alex Rivera"
+        : "Emma Watson";
 
   return (
     <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-zinc-300 transition-all flex flex-col group dark:bg-zinc-900 dark:border-zinc-800">
@@ -88,13 +85,9 @@ export default function PropertyCard({
         </div>
 
         <div className="absolute bottom-4 left-4 z-10">
-          <p className="text-[10px] text-zinc-300">
-            #{property.id}
-          </p>
+          <p className="text-[10px] text-zinc-300">#{property.id}</p>
 
-          <h3 className="text-xl font-bold text-white">
-            {formattedPrice}
-          </h3>
+          <h3 className="text-xl font-bold text-white">{formattedPrice}</h3>
         </div>
       </div>
 
@@ -105,8 +98,7 @@ export default function PropertyCard({
           </h3>
 
           <p className="text-xs text-zinc-500 line-clamp-1">
-            {property.address}, {property.city},{" "}
-            {property.district}
+            {property.address}, {property.city}, {property.district}
           </p>
 
           <div className="flex gap-4 text-xs text-zinc-500 mt-4">
@@ -122,9 +114,7 @@ export default function PropertyCard({
               {agentName.slice(0, 2)}
             </div>
 
-            <span className="text-xs text-zinc-600">
-              {agentName}
-            </span>
+            <span className="text-xs text-zinc-600">{agentName}</span>
           </div>
 
           <div className="flex gap-2">
@@ -136,10 +126,7 @@ export default function PropertyCard({
             </button>
 
             <button
-              onClick={() =>
-                property.id &&
-                onDelete(property.id)
-              }
+              onClick={() => property.id && onDelete(property.id)}
               className="px-2 py-1 rounded hover:bg-red-50 text-red-500"
             >
               🗑️

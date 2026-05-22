@@ -11,6 +11,7 @@ import Select from "../ui/Select";
 import Textarea from "../ui/Textarea";
 import FileInput from "../ui/FileInput";
 import ModalHeader from "../ui/from/ModalHeader";
+import ModalFooter from "../ui/from/ModalFooter";
 
 interface PropertyFormModalProps {
   isOpen: boolean;
@@ -324,21 +325,11 @@ export function PropertyFormModal({
         </form>
 
         {/* Footer controls action */}
-        <div className="bg-zinc-50 px-6 py-4 border-t border-zinc-200 flex justify-end gap-3 shrink-0 dark:bg-zinc-850 dark:border-zinc-800">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 border border-zinc-200 dark:border-zinc-750 text-xs font-semibold rounded-xl transition-all"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-5 py-2 bg-gradient-to-r from-rose-600 to-amber-500 text-white text-xs font-bold rounded-xl hover:opacity-90 shadow-md shadow-rose-500/10 transition-all"
-          >
-            Save Listing
-          </button>
-        </div>
+        <ModalFooter
+          onClose={onClose as any}
+          onSubmit={handleSubmit as any}
+          submitText="Save Listing"
+        />
       </div>
     </div>
   );
