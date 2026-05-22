@@ -9,6 +9,7 @@ import {
 import Input from "../ui/Input";
 import Select from "../ui/Select";
 import Textarea from "../ui/Textarea";
+import FileInput from "../ui/FileInput";
 
 interface PropertyFormModalProps {
   isOpen: boolean;
@@ -157,52 +158,24 @@ export function PropertyFormModal({
               placeholder="e.g. Oceanfront Glass Penthouse"
             />
 
-            {/* <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                Property Title
-              </label>
-              <input
-                type="text"
-                required
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="e.g. Oceanfront Glass Penthouse"
-                className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-              />
-            </div> */}
-
             <Textarea
-  label="Description"
-  name="description"
-  rows={3}
-  value={formData.description}
-  onChange={handleChange}
-  placeholder="Narrative summary highlighting unique features, sights..."
-/>
+              label="Description"
+              name="description"
+              rows={3}
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Narrative summary highlighting unique features, sights..."
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Price ($)
-                </label>
-                <input
-                  type="number"
-                  required
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div> */}
               <Input
-  label="Price ($)"
-  type="number"
-  name="price"
-  value={formData.price}
-  onChange={handleChange}
-  required
-/>
+                label="Price ($)"
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+              />
 
               <Select
                 label="Property Type"
@@ -216,38 +189,18 @@ export function PropertyFormModal({
                   { label: "Villa", value: PropertyType.VILLA },
                 ]}
               />
-              {/* <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Property Type
-                </label>
-                <select
-                  name="property_type"
-                  value={formData.property_type}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                >
-                  <option value={PropertyType.APARTMENT}>Apartment</option>
-                  <option value={PropertyType.HOUSE}>House</option>
-                  <option value={PropertyType.LAND}>Land</option>
-                  <option value={PropertyType.VILLA}>Villa</option>
-                </select>
-              </div> */}
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Availability Status
-                </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                >
-                  <option value={PropertyStatus.AVAILABLE}>Available</option>
-                  <option value={PropertyStatus.SOLD}>Sold</option>
-                  <option value={PropertyStatus.RENTED}>Rented</option>
-                </select>
-              </div>
+              <Select
+                label="Availability Status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                options={[
+                  { label: "Available", value: PropertyStatus.AVAILABLE },
+                  { label: "Sold", value: PropertyStatus.SOLD },
+                  { label: "Rented", value: PropertyStatus.RENTED },
+                ]}
+              />
             </div>
           </div>
 
@@ -258,107 +211,73 @@ export function PropertyFormModal({
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
               2. Address & Geolocation
             </h4>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                Street Address
-              </label>
-              <input
+
+            <Input
+              label="Street Address"
+              type="text"
+              required
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="e.g. 102 Ocean Drive"
+            />
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <Input
+                label="City"
                 type="text"
                 required
-                name="address"
-                value={formData.address}
+                name="city"
+                value={formData.city}
                 onChange={handleChange}
-                placeholder="e.g. 102 Ocean Drive"
-                className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+              />
+
+              <Input
+                label="District"
+                type="text"
+                required
+                name="district"
+                value={formData.district}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Country"
+                type="text"
+                required
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+              />
+
+              <Input
+                label="Owner ID"
+                type="number"
+                required
+                name="owner_id"
+                value={formData.owner_id}
+                onChange={handleChange}
               />
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  City
-                </label>
-                <input
-                  type="text"
-                  required
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  District
-                </label>
-                <input
-                  type="text"
-                  required
-                  name="district"
-                  value={formData.district}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Country
-                </label>
-                <input
-                  type="text"
-                  required
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Owner ID
-                </label>
-                <input
-                  type="number"
-                  required
-                  name="owner_id"
-                  value={formData.owner_id}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Latitude (optional)
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  name="latitude"
-                  value={formData.latitude}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
+              <Input
+                label="Latitude (optional)"
+                type="number"
+                step="any"
+                name="latitude"
+                value={formData.latitude}
+                onChange={handleChange}
+              />
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Longitude (optional)
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  name="longitude"
-                  value={formData.longitude}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
+              <Input
+                label="Longitude (optional)"
+                type="number"
+                step="any"
+                name="longitude"
+                value={formData.longitude}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
@@ -369,48 +288,33 @@ export function PropertyFormModal({
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
               3. Size & Capacity Parameters
             </h4>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Bedrooms
-                </label>
-                <input
-                  type="number"
-                  required
-                  name="bedrooms"
-                  value={formData.bedrooms}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Input
+                label="Bedrooms"
+                type="number"
+                required
+                name="bedrooms"
+                value={formData.bedrooms}
+                onChange={handleChange}
+              />
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Bathrooms
-                </label>
-                <input
-                  type="number"
-                  required
-                  name="bathrooms"
-                  value={formData.bathrooms}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
+              <Input
+                label="Bathrooms"
+                type="number"
+                required
+                name="bathrooms"
+                value={formData.bathrooms}
+                onChange={handleChange}
+              />
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                  Area size (sqft)
-                </label>
-                <input
-                  type="number"
-                  required
-                  name="area_size"
-                  value={formData.area_size}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-                />
-              </div>
+              <Input
+                label="Area size (sqft)"
+                type="number"
+                required
+                name="area_size"
+                value={formData.area_size}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
@@ -423,52 +327,20 @@ export function PropertyFormModal({
             </h4>
 
             {/* IMAGE */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                Property Image
-              </label>
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={setImageFile as any}
-                className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium
-      file:mr-4 file:px-3 file:py-1.5 file:border-0
-      file:bg-blue-600 file:text-white file:rounded-lg
-      dark:bg-zinc-800 dark:border-zinc-700"
-              />
-
-              {formData.image_url && (
-                <img
-                  src={formData.image_url}
-                  alt="Preview"
-                  className="w-full h-40 object-cover rounded-lg border"
-                />
-              )}
-            </div>
+            <FileInput
+              label="Property Image"
+              accept="image/*"
+              onChange={setImageFile as any}
+              previewUrl={image as any}
+            />
 
             {/* VIDEO */}
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                Property Video
-              </label>
-
-              <input
-                type="file"
-                accept="video/*"
-                onChange={setVideoFile as any}
-                className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium
-      file:mr-4 file:px-3 file:py-1.5 file:border-0
-      file:bg-green-600 file:text-white file:rounded-lg
-      dark:bg-zinc-800 dark:border-zinc-700"
-              />
-
-              {formData.video_url && (
-                <video controls className="w-full rounded-lg border">
-                  <source src={formData.video_url} />
-                </video>
-              )}
-            </div>
+            <FileInput
+              label="Property Video"
+              accept="video/*"
+              onChange={setVideoFile as any}
+              previewUrl={videoFile as any}
+            />
           </div>
         </form>
 
