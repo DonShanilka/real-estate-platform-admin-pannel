@@ -38,7 +38,7 @@ export const propertyApi = {
       }
 
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       saveFallbackDB(data);
 
       return data.data;
