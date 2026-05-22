@@ -1,8 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Property, PropertyType, PropertyStatus } from "@/src/types/propertyTypes";
+import {
+  Property,
+  PropertyType,
+  PropertyStatus,
+} from "@/src/types/propertyTypes";
 import Input from "../ui/Input";
+import Select from "../ui/Select";
 
 interface PropertyFormModalProps {
   isOpen: boolean;
@@ -195,7 +200,19 @@ export function PropertyFormModal({
                 />
               </div>
 
-              <div className="space-y-1">
+              <Select
+                label="Property Type"
+                name="property_type"
+                value={formData.property_type}
+                onChange={handleChange}
+                options={[
+                  { label: "Apartment", value: PropertyType.APARTMENT },
+                  { label: "House", value: PropertyType.HOUSE },
+                  { label: "Land", value: PropertyType.LAND },
+                  { label: "Villa", value: PropertyType.VILLA },
+                ]}
+              />
+              {/* <div className="space-y-1">
                 <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
                   Property Type
                 </label>
@@ -210,7 +227,7 @@ export function PropertyFormModal({
                   <option value={PropertyType.LAND}>Land</option>
                   <option value={PropertyType.VILLA}>Villa</option>
                 </select>
-              </div>
+              </div> */}
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
