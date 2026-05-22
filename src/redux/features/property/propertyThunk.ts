@@ -1,33 +1,31 @@
-export enum PropertyType {
-  APARTMENT = "APARTMENT",
-  HOUSE = "HOUSE",
-  LAND = "LAND",
-  VILLA = "VILLA",
-}
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { propertyApi } from "./propertyApi";
+import { Property } from "./propertyTypes";
 
-export enum PropertyStatus {
-  AVAILABLE = "AVAILABLE",
-  SOLD = "SOLD",
-  RENTED = "RENTED",
-}
+export const fetchProperties = createAsyncThunk(
+  "property/fetchAll",
+  async () => {
+    return await propertyApi.getAllProperties();
+  },
+);
 
-export interface Property {
-  id?: number;
-  title: string;
-  description: string | null;
-  price: number;
-  property_type: PropertyType;
-  status: PropertyStatus;
-  bedrooms: number;
-  bathrooms: number;
-  area_size: number;
-  address: string;
-  city: string;
-  district: string;
-  country: string;
-  latitude: number | null;
-  longitude: number | null;
-  owner_id: number;
-  image_url: string;
-  video_url: string;
-}
+export const createProperty = createAsyncThunk(
+  "property/create",
+  async (property: Omit<Property, "id">) => {
+    return await propertyApi.saveProperty(property);
+  },
+);
+
+export const updatePropertyThunk = createAsyncThunk(
+  "property/update",
+  async ({ id, property }: { id: number; property: Partial<Property> }) => {
+    return await propertyApi.updateProperty(id, property);
+  },
+);
+
+export const deletePropertyThunk = createAsyncThunk(
+  "property/delete",
+  async (id: number) => {
+    return await propertyApi.deleteProperty(id);
+  },
+);

@@ -85,7 +85,7 @@ export function PropertyFormModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     onSave({
       ...property,
       ...formData,
@@ -141,14 +141,16 @@ export function PropertyFormModal({
             <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
               1. General Details
             </h4>
-            <Input lable="Property Title" type="text"
-                required
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="e.g. Oceanfront Glass Penthouse"
-              />
-                
+            <Input
+              lable="Property Title"
+              type="text"
+              required
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="e.g. Oceanfront Glass Penthouse"
+            />
+
             {/* <div className="space-y-1">
               <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
                 Property Title

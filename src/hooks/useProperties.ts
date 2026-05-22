@@ -13,10 +13,9 @@ export const useProperties = () => {
 
       const response = await propertyApi.getAllProperties();
 
-      const data: Property[] =
-        Array.isArray(response)
-          ? response
-          : Array.isArray(response?.data)
+      const data: Property[] = Array.isArray(response)
+        ? response
+        : Array.isArray(response?.data)
           ? response.data
           : [];
 
