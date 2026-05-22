@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Property, PropertyType, PropertyStatus } from "@/src/lib/api";
+import { Property, PropertyType, PropertyStatus } from "@/src/types/propertyTypes";
 import Input from "../ui/Input";
 
 interface PropertyFormModalProps {

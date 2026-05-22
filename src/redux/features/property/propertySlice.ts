@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Property } from "./propertyTypes";
+import { Property } from "../../../types/propertyTypes";
 
 import {
   fetchProperties,

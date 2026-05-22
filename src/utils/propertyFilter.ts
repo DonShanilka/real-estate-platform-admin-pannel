@@ -1,14 +1,18 @@
 import {
   Property,
   PropertyStatus,
-} from "@/src/lib/api";
+} from "@/src/types/propertyTypes";
 
 export const filterProperties = (
-  properties: Property[],
+  properties: Property[] = [],
   searchQuery: string,
   activeTab: string,
   categoryFilter: string
-) => {
+): Property[] => {
+  if (!Array.isArray(properties)) {
+    return [];
+  }
+
   return properties.filter((p) => {
     const query = searchQuery.toLowerCase();
 

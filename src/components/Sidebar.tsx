@@ -8,7 +8,7 @@ import { useState } from "react";
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: Icons.Dashboard },
   { name: "Property Management", href: "/property-management", icon: Icons.Properties },
-  { name: "Add Property", href: "/add-property", icon: Icons.AddProperty },
+  // { name: "Add Property", href: "/add-property", icon: Icons.AddProperty },
   { name: "User Management", href: "/user-management", icon: Icons.Users },
   { name: "Booking Management", href: "/booking-management", icon: Icons.Bookings, badge: "8" },
   { name: "Reviews Moderation", href: "/reviews-moderation", icon: Icons.Reviews, badge: "3" },

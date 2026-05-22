@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { propertyApi } from "./propertyApi";
-import { Property } from "./propertyTypes";
+import { Property } from "../../../types/propertyTypes";
 
 export const fetchProperties = createAsyncThunk(
   "property/fetchAll",

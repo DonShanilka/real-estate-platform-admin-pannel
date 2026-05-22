@@ -2,77 +2,77 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import {
-  Property,
-  propertyApi as api,
-  PropertyStatus,
-  PropertyType,
-} from "@/src/lib/api";
+// import {
+//   Property,
+//   propertyApi as api,
+//   PropertyStatus,
+//   PropertyType,
+// } from "@/src/lib/api";
 
 export default function AddProperty() {
-  const [step, setStep] = useState(1);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    price: 0,
-    property_type: PropertyType.VILLA,
-    status: PropertyStatus.AVAILABLE,
-    bedrooms: 3,
-    bathrooms: 2,
-    area_size: 1500,
-    address: "",
-    city: "",
-    district: "",
-    country: "USA",
-    latitude: 0,
-    longitude: 0,
-    owner_id: 1,
-    image_url: "",
-    video_url: "",
-  });
+  // const [step, setStep] = useState(1);
+  // const [submitted, setSubmitted] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  // const [formData, setFormData] = useState({
+  //   title: "",
+  //   description: "",
+  //   price: 0,
+  //   property_type: PropertyType.VILLA,
+  //   status: PropertyStatus.AVAILABLE,
+  //   bedrooms: 3,
+  //   bathrooms: 2,
+  //   area_size: 1500,
+  //   address: "",
+  //   city: "",
+  //   district: "",
+  //   country: "USA",
+  //   latitude: 0,
+  //   longitude: 0,
+  //   owner_id: 1,
+  //   image_url: "",
+  //   video_url: "",
+  // });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const numberFields = ["price", "bedrooms", "bathrooms", "area_size", "latitude", "longitude", "owner_id"];
-    setFormData({ ...formData, [name]: numberFields.includes(name) ? parseFloat(value) || 0 : value });
-  };
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  //   const { name, value } = e.target;
+  //   const numberFields = ["price", "bedrooms", "bathrooms", "area_size", "latitude", "longitude", "owner_id"];
+  //   setFormData({ ...formData, [name]: numberFields.includes(name) ? parseFloat(value) || 0 : value });
+  // };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const payload: Omit<Property, "id"> = {
-        title: formData.title,
-        description: formData.description || null,
-        price: formData.price,
-        property_type: formData.property_type,
-        status: formData.status,
-        bedrooms: formData.bedrooms,
-        bathrooms: formData.bathrooms,
-        area_size: formData.area_size,
-        address: formData.address,
-        city: formData.city,
-        district: formData.district,
-        country: formData.country,
-        latitude: formData.latitude || null,
-        longitude: formData.longitude || null,
-        owner_id: formData.owner_id,
-        image_url: formData.image_url,
-        video_url: formData.video_url,
-      };
+  // const handleFormSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const payload: Omit<Property, "id"> = {
+  //       title: formData.title,
+  //       description: formData.description || null,
+  //       price: formData.price,
+  //       property_type: formData.property_type,
+  //       status: formData.status,
+  //       bedrooms: formData.bedrooms,
+  //       bathrooms: formData.bathrooms,
+  //       area_size: formData.area_size,
+  //       address: formData.address,
+  //       city: formData.city,
+  //       district: formData.district,
+  //       country: formData.country,
+  //       latitude: formData.latitude || null,
+  //       longitude: formData.longitude || null,
+  //       owner_id: formData.owner_id,
+  //       image_url: formData.image_url,
+  //       video_url: formData.video_url,
+  //     };
 
-      const saved = await api.saveProperty(payload);
-      if (saved) {
-        setSubmitted(true);
-      }
-    } catch (err) {
-      console.error("Failed to submit property listing:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     const saved = await api.saveProperty(payload);
+  //     if (saved) {
+  //       setSubmitted(true);
+  //     }
+  //   } catch (err) {
+  //     console.error("Failed to submit property listing:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">

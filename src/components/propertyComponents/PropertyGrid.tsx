@@ -1,7 +1,7 @@
 "use client";
 
-import { Property } from "@/src/lib/api";
-import { PropertyCard } from "./PropertyCard";
+import { Property } from "@/src/types/propertyTypes";
+import PropertyCard  from "./PropertyCard";
 
 interface Props {
   properties: Property[];

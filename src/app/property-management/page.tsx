@@ -1,36 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Property } from "@/src/lib/api";
-import { propertyApi } from "@/src/lib/api";
+import { Property } from "@/src/types/propertyTypes";
 
 import PropertyHeader from "@/src/components/propertyComponents/PropertyHeader";
 import PropertyFilters from "@/src/components/propertyComponents/PropertyFilters";
 import PropertyGrid from "@/src/components/propertyComponents/PropertyGrid";
 import PropertyLoading from "@/src/components/propertyComponents/PropertyLoading";
 import PropertyEmptyState from "@/src/components/propertyComponents/PropertyEmptyState";
-
 import { PropertyFormModal } from "@/src/components/propertyComponents/PropertyFormModal";
-
-import { useProperties } from "@/src/hooks/useProperties";
 
 import { filterProperties } from "@/src/utils/propertyFilter";
 
+import { useAppDispatch } from "@/src/hooks/useAppDispatch";
+import { useAppSelector } from "@/src/hooks/useAppSelector";
+
+import {
+  fetchProperties,
+  deletePropertyThunk,
+} from "@/src/redux/features/property/propertyThunk";
+
 export default function PropertyManagement() {
-  const { properties, setProperties, loading } = useProperties();
 
+  const dispatch = useAppDispatch();
+  
+  const { properties, loading } = useAppSelector((state) => state.property);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const [activeTab, setActiveTab] = useState<
-    "All" | "Active" | "Pending" | "Sold"
-  >("All");
-
+  const [activeTab, setActiveTab] = useState<"All" | "Active" | "Pending" | "Sold">("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
-
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchProperties());
+  }, [dispatch]);
 
   const filteredProperties = filterProperties(
     properties,
@@ -40,9 +44,7 @@ export default function PropertyManagement() {
   );
 
   const handleDelete = async (id: number) => {
-    await propertyApi.deleteProperty(id);
-
-    setProperties((prev: any) => prev.filter((p: any) => p.id !== id));
+    dispatch(deletePropertyThunk(id));
   };
 
   const handleEdit = (property: Property) => {
@@ -83,7 +85,10 @@ export default function PropertyManagement() {
 
       <PropertyFormModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingProperty(null);
+        }}
         property={editingProperty}
         onSave={() => {}}
       />

@@ -1,7 +1,7 @@
 "use client";
 
 import { Icons } from "@/src/components/Icons";
-import { PropertyType } from "@/src/lib/api";
+import { PropertyType } from "@/src/types/propertyTypes";
 import React from "react";
 
 interface Props {

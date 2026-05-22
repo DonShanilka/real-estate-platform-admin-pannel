@@ -1,4 +1,4 @@
-import { Property } from "./propertyTypes";
+import { Property } from "../../../types/propertyTypes";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -38,10 +38,10 @@ export const propertyApi = {
       }
 
       const data = await response.json();
-
+      console.log(data)
       saveFallbackDB(data);
 
-      return data;
+      return data.data;
     } catch {
       return getFallbackDB();
     }
