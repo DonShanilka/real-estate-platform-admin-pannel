@@ -8,6 +8,7 @@ import {
 } from "@/src/types/propertyTypes";
 import Input from "../ui/Input";
 import Select from "../ui/Select";
+import Textarea from "../ui/Textarea";
 
 interface PropertyFormModalProps {
   isOpen: boolean;
@@ -171,19 +172,14 @@ export function PropertyFormModal({
               />
             </div> */}
 
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
-                Description
-              </label>
-              <textarea
-                name="description"
-                rows={3}
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Narrative summary highlighting unique features, sights..."
-                className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
-              />
-            </div>
+            <Textarea
+  label="Description"
+  name="description"
+  rows={3}
+  value={formData.description}
+  onChange={handleChange}
+  placeholder="Narrative summary highlighting unique features, sights..."
+/>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* <div className="space-y-1">
