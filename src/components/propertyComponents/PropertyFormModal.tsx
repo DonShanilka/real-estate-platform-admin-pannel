@@ -147,7 +147,7 @@ export function PropertyFormModal({
               1. General Details
             </h4>
             <Input
-              lable="Property Title"
+              label="Property Title"
               type="text"
               required
               name="title"
@@ -186,7 +186,7 @@ export function PropertyFormModal({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-1">
+              {/* <div className="space-y-1">
                 <label className="text-xs font-bold text-zinc-500 dark:text-zinc-400">
                   Price ($)
                 </label>
@@ -198,7 +198,15 @@ export function PropertyFormModal({
                   onChange={handleChange}
                   className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
                 />
-              </div>
+              </div> */}
+              <Input
+  label="Price ($)"
+  type="number"
+  name="price"
+  value={formData.price}
+  onChange={handleChange}
+  required
+/>
 
               <Select
                 label="Property Type"
