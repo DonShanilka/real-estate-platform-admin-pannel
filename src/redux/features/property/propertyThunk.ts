@@ -11,16 +11,22 @@ export const fetchProperties = createAsyncThunk(
 
 export const createPropertyThunk = createAsyncThunk(
   "property/create",
-  async (property: Property) => {
-    return await propertyApi.saveProperty(property);
+  async (propertyData: FormData) => {
+    return await propertyApi.saveProperty(propertyData);
   }
 );
 
 export const updatePropertyThunk = createAsyncThunk(
   "property/update",
-  async ({ id, property }: { id: number; property: Partial<Property> }) => {
-    return await propertyApi.updateProperty(id, property);
-  },
+  async ({
+    id,
+    property,
+  }: {
+    id: number;
+    property: FormData;
+  }) => {
+    return await propertyApi.updateProperty(id, property as any);
+  }
 );
 
 export const deletePropertyThunk = createAsyncThunk(
