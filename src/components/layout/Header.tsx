@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Icons } from "./Icons";
+import { Icons } from "../layout/Icons";
 import { useState } from "react";
 
 const pageTitles: Record<string, string> = {

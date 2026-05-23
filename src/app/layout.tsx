@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AdminLayoutShell } from "@/src/components/AdminLayoutShell";
+import { AdminLayoutShell } from "@/src/components/layout/AdminLayoutShell";
 import ReduxProvider from "@/src/providers/ReduxProvider";
 
 const geistSans = Geist({

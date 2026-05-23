@@ -135,6 +135,10 @@ export function PropertyFormModal({
 
   onSave(data as any);
 
+  for (const pair of data.entries()) {
+  console.log(pair[0], pair[1]);
+}
+
   console.log("IMAGE FILE:", imageFile);
 console.log("VIDEO FILE:", videoFile);
 

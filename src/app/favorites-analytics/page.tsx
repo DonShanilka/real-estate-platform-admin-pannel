@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Icons } from "@/src/components/Icons";
+import { Icons } from "@/src/components/layout/Icons";
 
 export default function FavoritesAnalytics() {
   const [selectedPeriod, setSelectedPeriod] = useState("Weekly");

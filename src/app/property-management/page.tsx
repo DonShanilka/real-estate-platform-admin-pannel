@@ -60,7 +60,7 @@ export default function PropertyManagement() {
     setIsModalOpen(true);
   };
 
-  const handleSave = async (propertyData: Property) => {
+  const handleSave = async (propertyData: FormData) => {
     try {
       if (editingProperty) {
         await dispatch(
@@ -120,7 +120,7 @@ export default function PropertyManagement() {
           setEditingProperty(null);
         }}
         property={editingProperty}
-        onSave={handleSave}
+        onSave={handleSave as any}
       />
     </div>
   );

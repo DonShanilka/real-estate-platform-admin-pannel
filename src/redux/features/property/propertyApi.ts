@@ -61,32 +61,23 @@ export const propertyApi = {
   },
 
   async updateProperty(
-    id: number,
-    property: Partial<Property>,
-  ): Promise<Property> {
-    try {
-      const response = await fetch(
-        `${BASE_URL}/properties/updateProperty/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(property),
-        },
-      );
-
-      return await response.json();
-    } catch {
-      const db = getFallbackDB();
-
-      const updated = db.map((p) => (p.id === id ? { ...p, ...property } : p));
-
-      saveFallbackDB(updated);
-
-      return updated.find((p) => p.id === id) as Property;
+  id: number,
+  propertyData: FormData
+) {
+  const response = await fetch(
+    `${BASE_URL}/properties/updateProperty/${id}`,
+    {
+      method: "PUT",
+      body: propertyData,
     }
-  },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update property");
+  }
+
+  return await response.json();
+},
 
   async deleteProperty(id: number) {
     try {

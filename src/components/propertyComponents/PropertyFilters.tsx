@@ -1,6 +1,6 @@
 "use client";
 
-import { Icons } from "@/src/components/Icons";
+import { Icons } from "@/src/components/layout/Icons";
 import { PropertyType } from "@/src/types/propertyTypes";
 import React from "react";
 

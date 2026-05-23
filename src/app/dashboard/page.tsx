@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Icons } from "@/src/components/Icons";
-
+import { Icons } from "@/src/components/layout/Icons";
 export default function Dashboard() {
   const [selectedRange, setSelectedRange] = useState("This Month");
 
