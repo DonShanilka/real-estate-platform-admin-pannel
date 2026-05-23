@@ -6,10 +6,10 @@ import {
   PropertyType,
   PropertyStatus,
 } from "@/src/types/propertyTypes";
-import Input from "../ui/Input";
-import Select from "../ui/Select";
-import Textarea from "../ui/Textarea";
-import FileInput from "../ui/FileInput";
+import Input from "../ui/core/Input";
+import Select from "../ui/core/Select";
+import Textarea from "../ui/core/Textarea";
+import FileInput from "../ui/core/FileInput";
 import ModalHeader from "../ui/from/ModalHeader";
 import ModalFooter from "../ui/from/ModalFooter";
 
