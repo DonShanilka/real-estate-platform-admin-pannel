@@ -20,9 +20,14 @@ interface PropertyFormModalProps {
   onSave: (property: Property) => void;
 }
 
-export function PropertyFormModal({isOpen, onClose, property, onSave}: PropertyFormModalProps) {
-
-  const [formData, setFormData] = useState({
+export function PropertyFormModal({
+  isOpen,
+  onClose,
+  property,
+  onSave,
+}: PropertyFormModalProps) {
+  
+  const defaultFormData = {
     title: "",
     description: "",
     price: 0,
@@ -34,14 +39,15 @@ export function PropertyFormModal({isOpen, onClose, property, onSave}: PropertyF
     address: "",
     city: "",
     district: "",
-    country: "USA",
+    country: "Sri Lanka",
     latitude: 0,
     longitude: 0,
     owner_id: 1,
-  });
+  };
 
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [image, setImageFile] = useState<File | null>(null);
+  const isEdit = Boolean(property?.id);
 
   useEffect(() => {
     if (property) {
@@ -67,8 +73,11 @@ export function PropertyFormModal({isOpen, onClose, property, onSave}: PropertyF
 
   if (!isOpen) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,) => {
-
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
     const numberFields = [
       "price",

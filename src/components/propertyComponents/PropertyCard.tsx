@@ -9,9 +9,6 @@ interface PropertyCardProps {
   onDelete: (id: number) => void;
 }
 
-const FALLBACK_IMAGE = ""; 
-// "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop";
-
 export default function PropertyCard({
   property,
   onEdit,
@@ -24,56 +21,50 @@ export default function PropertyCard({
       ? `$${price.toLocaleString()}`
       : `$${price.toLocaleString()}/mo`;
 
-  // const imageUrl = property.image_url?.trim() || FALLBACK_IMAGE;
+  const FALLBACK_IMAGE =
+    "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop";
 
-  const imageUrl =
-    typeof property.image_url === "string" &&
-    property.image_url.trim().length > 0
-      ? property.image_url.trim()
-      : FALLBACK_IMAGE;
+  function normalizeImageUrl(url?: string) {
+    if (!url) return "";
 
-  const status = property.status;
+    return url.trim().replace(/["']/g, "").replace(/\s/g, "");
+  }
 
-  const statusConfig = {
-    AVAILABLE: {
-      text: "Available",
-      className: "bg-emerald-500 text-white",
-    },
-    RENTED: {
-      text: "Rented",
-      className: "bg-amber-500 text-white",
-    },
-    SOLD: {
-      text: "Sold",
-      className: "bg-zinc-700 text-white",
-    },
+  const rawImageUrl = normalizeImageUrl(property.image_url);
+
+  // IMPORTANT: do NOT convert to base64 (you are NOT using base64)
+  const imageUrl = rawImageUrl || FALLBACK_IMAGE;
+
+  const statusConfig: Record<string, { text: string; className: string }> = {
+    AVAILABLE: { text: "Available", className: "bg-emerald-500 text-white" },
+    RENTED: { text: "Rented", className: "bg-amber-500 text-white" },
+    SOLD: { text: "Sold", className: "bg-zinc-700 text-white" },
   };
 
-  const currentStatus = statusConfig[status] ?? statusConfig.AVAILABLE;
+  const currentStatus = statusConfig[property.status] ?? statusConfig.AVAILABLE;
 
   const typeText =
     property.property_type.charAt(0) +
     property.property_type.slice(1).toLowerCase();
 
-  const ownerId = property.owner_id ?? 0;
-
   const agentName =
-    ownerId === 1
+    property.owner_id === 1
       ? "Sarah Jenkins"
-      : ownerId === 2
+      : property.owner_id === 2
         ? "Alex Rivera"
         : "Emma Watson";
 
   return (
-    <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-zinc-300 transition-all flex flex-col group dark:bg-zinc-900 dark:border-zinc-800">
-      <div className="relative h-44 overflow-hidden">
+    <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group dark:bg-zinc-900 dark:border-zinc-800">
+      {/* IMAGE */}
+      <div className="relative h-44 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
         <img
           src={imageUrl}
           alt={property.title}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
-            console.error("Image failed:", imageUrl);
+            console.error("Image failed (Backblaze issue):", imageUrl);
             e.currentTarget.src = FALLBACK_IMAGE;
           }}
         />
@@ -94,14 +85,14 @@ export default function PropertyCard({
 
         <div className="absolute bottom-4 left-4 z-10">
           <p className="text-[10px] text-zinc-300">#{property.id}</p>
-
           <h3 className="text-xl font-bold text-white">{formattedPrice}</h3>
         </div>
       </div>
 
-      <div className="p-5 flex-1 flex flex-col justify-between">
+      {/* CONTENT */}
+      <div className="p-5 flex flex-col justify-between flex-1">
         <div>
-          <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 line-clamp-1">
+          <h3 className="font-bold text-sm line-clamp-1 dark:text-white">
             {property.title}
           </h3>
 
@@ -132,12 +123,12 @@ export default function PropertyCard({
           </div>
         </div>
 
+        {/* ACTIONS */}
         <div className="flex justify-between items-center mt-5">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs font-bold">
               {agentName.slice(0, 2)}
             </div>
-
             <span className="text-xs text-zinc-600">{agentName}</span>
           </div>
 
