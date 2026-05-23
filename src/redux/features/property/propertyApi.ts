@@ -47,29 +47,17 @@ export const propertyApi = {
     }
   },
 
-  async saveProperty(property: Omit<Property, "id">): Promise<Property> {
-    try {
-      const response = await fetch(`${BASE_URL}/properties/saveProperty`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(property),
-      });
+  async saveProperty(propertyData: FormData) {
+    const response = await fetch(`${BASE_URL}/properties/saveProperty`, {
+      method: "POST",
+      body: propertyData,
+    });
 
-      return await response.json();
-    } catch {
-      const db = getFallbackDB();
-
-      const newProperty = {
-        ...property,
-        id: db.length > 0 ? Math.max(...db.map((p) => p.id || 0)) + 1 : 1,
-      };
-
-      saveFallbackDB([...db, newProperty]);
-
-      return newProperty;
+    if (!response.ok) {
+      throw new Error("Failed to create property");
     }
+
+    return await response.json();
   },
 
   async updateProperty(

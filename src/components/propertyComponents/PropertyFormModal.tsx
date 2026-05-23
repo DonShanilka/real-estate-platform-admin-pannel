@@ -26,7 +26,6 @@ export function PropertyFormModal({
   property,
   onSave,
 }: PropertyFormModalProps) {
-  
   const defaultFormData = {
     title: "",
     description: "",
@@ -45,8 +44,9 @@ export function PropertyFormModal({
     owner_id: 1,
   };
 
+  const [formData, setFormData] = useState(defaultFormData);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [image, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const isEdit = Boolean(property?.id);
 
   useEffect(() => {
@@ -63,13 +63,17 @@ export function PropertyFormModal({
         address: property.address || "",
         city: property.city || "",
         district: property.district || "",
-        country: property.country || "USA",
+        country: property.country || "Sri Lanka",
         latitude: property.latitude || 0,
         longitude: property.longitude || 0,
         owner_id: property.owner_id || 1,
       });
+    } else {
+      setFormData(defaultFormData);
+      setImageFile(null);
+      setVideoFile(null);
     }
-  }, [property]);
+  }, [property, isOpen]);
 
   if (!isOpen) return null;
 
@@ -94,15 +98,49 @@ export function PropertyFormModal({
     }));
   };
 
-  const handleSubmit = (e: Event) => {
-    e.preventDefault();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    onSave({
-      ...property,
-      ...formData,
-      id: property?.id,
-    } as Property);
-  };
+  const data = new FormData();
+
+  data.append("title", formData.title);
+  data.append("description", formData.description);
+
+  data.append("price", String(formData.price));
+
+  data.append("property_type", formData.property_type);
+  data.append("status", formData.status);
+
+  data.append("bedrooms", String(formData.bedrooms));
+  data.append("bathrooms", String(formData.bathrooms));
+  data.append("area_size", String(formData.area_size));
+
+  data.append("address", formData.address);
+  data.append("city", formData.city);
+  data.append("district", formData.district);
+  data.append("country", formData.country);
+
+  data.append("latitude", String(formData.latitude));
+  data.append("longitude", String(formData.longitude));
+
+  data.append("owner_id", String(formData.owner_id));
+
+  if (imageFile) {
+    data.append("image", imageFile);
+  }
+
+  if (videoFile) {
+    data.append("video", videoFile);
+  }
+
+  onSave(data as any);
+
+  console.log("IMAGE FILE:", imageFile);
+console.log("VIDEO FILE:", videoFile);
+
+console.log(imageFile instanceof File);
+console.log(videoFile instanceof File);
+};
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
@@ -312,16 +350,17 @@ export function PropertyFormModal({
             <FileInput
               label="Property Image"
               accept="image/*"
-              onChange={setImageFile as any}
-              previewUrl={image as any}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setImageFile(e.target.files?.[0] || null)
+              }
             />
 
-            {/* VIDEO */}
             <FileInput
               label="Property Video"
               accept="video/*"
-              onChange={setVideoFile as any}
-              previewUrl={videoFile as any}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setVideoFile(e.target.files?.[0] || null)
+              }
             />
           </div>
         </form>
