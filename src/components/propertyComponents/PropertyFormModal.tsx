@@ -20,12 +20,8 @@ interface PropertyFormModalProps {
   onSave: (property: Property) => void;
 }
 
-export function PropertyFormModal({
-  isOpen,
-  onClose,
-  property,
-  onSave,
-}: PropertyFormModalProps) {
+export function PropertyFormModal({isOpen, onClose, property, onSave}: PropertyFormModalProps) {
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -71,11 +67,8 @@ export function PropertyFormModal({
 
   if (!isOpen) return null;
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,) => {
+
     const { name, value } = e.target;
     const numberFields = [
       "price",
@@ -92,7 +85,7 @@ export function PropertyFormModal({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: Event) => {
     e.preventDefault();
 
     onSave({
@@ -120,7 +113,7 @@ export function PropertyFormModal({
 
         {/* Scrollable form content */}
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit as any}
           className="flex-1 overflow-y-auto p-6 space-y-6"
         >
           {/* General Information */}

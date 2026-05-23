@@ -18,14 +18,17 @@ import { useAppSelector } from "@/src/hooks/useAppSelector";
 
 import {
   fetchProperties,
+  createPropertyThunk,
+  updatePropertyThunk,
   deletePropertyThunk,
 } from "@/src/redux/features/property/propertyThunk";
 
 export default function PropertyManagement() {
-
-  const dispatch = useAppDispatch();
   
+  const dispatch = useAppDispatch();
+
   const { properties, loading } = useAppSelector((state) => state.property);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"All" | "Active" | "Pending" | "Sold">("All");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -52,9 +55,36 @@ export default function PropertyManagement() {
     setIsModalOpen(true);
   };
 
+  const handleCreate = () => {
+    setEditingProperty(null);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (propertyData: Property) => {
+    try {
+      if (editingProperty) {
+        await dispatch(
+          updatePropertyThunk({
+            id: editingProperty.id!,
+            property: propertyData,
+          }),
+        ).unwrap();
+      } else {
+        await dispatch(createPropertyThunk(propertyData)).unwrap();
+      }
+
+      setIsModalOpen(false);
+      setEditingProperty(null);
+
+      dispatch(fetchProperties());
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <PropertyHeader total={properties.length} />
+      <PropertyHeader total={properties.length} onAddProperty={handleCreate} />
 
       <PropertyFilters
         searchQuery={searchQuery}
@@ -90,7 +120,7 @@ export default function PropertyManagement() {
           setEditingProperty(null);
         }}
         property={editingProperty}
-        onSave={() => {}}
+        onSave={handleSave}
       />
     </div>
   );

@@ -4,11 +4,7 @@ type ModalHeaderProps = {
   onClose: () => void;
 };
 
-export default function ModalHeader({
-  title,
-  subtitle,
-  onClose,
-}: ModalHeaderProps) {
+export default function ModalHeader({title, subtitle, onClose,}: ModalHeaderProps) {
   return (
     <div className="bg-zinc-950 text-white p-5 border-b border-zinc-850 flex justify-between items-center shrink-0">
       <div>

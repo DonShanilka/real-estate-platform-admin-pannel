@@ -9,8 +9,8 @@ interface PropertyCardProps {
   onDelete: (id: number) => void;
 }
 
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop";
+const FALLBACK_IMAGE = ""; 
+// "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop";
 
 export default function PropertyCard({
   property,
@@ -24,7 +24,13 @@ export default function PropertyCard({
       ? `$${price.toLocaleString()}`
       : `$${price.toLocaleString()}/mo`;
 
-  const imageUrl = property.image_url?.trim() || FALLBACK_IMAGE;
+  // const imageUrl = property.image_url?.trim() || FALLBACK_IMAGE;
+
+  const imageUrl =
+    typeof property.image_url === "string" &&
+    property.image_url.trim().length > 0
+      ? property.image_url.trim()
+      : FALLBACK_IMAGE;
 
   const status = property.status;
 
@@ -64,8 +70,10 @@ export default function PropertyCard({
         <img
           src={imageUrl}
           alt={property.title}
+          loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
+            console.error("Image failed:", imageUrl);
             e.currentTarget.src = FALLBACK_IMAGE;
           }}
         />
@@ -97,14 +105,30 @@ export default function PropertyCard({
             {property.title}
           </h3>
 
-          <p className="text-xs text-zinc-500 line-clamp-1">
-            {property.address}, {property.city}, {property.district}
+          <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+            {property.address}, {property.city}, {property.district},{" "}
+            {property.country}
           </p>
 
-          <div className="flex gap-4 text-xs text-zinc-500 mt-4">
-            <span>🛏 {property.bedrooms}</span>
-            <span>🛁 {property.bathrooms}</span>
-            <span>📐 {property.area_size} sqft</span>
+          <div className="grid grid-cols-3 gap-2 text-xs text-zinc-500 mt-4">
+            <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2 text-center">
+              <div className="font-semibold">{property.bedrooms}</div>
+              <div>Bedrooms</div>
+            </div>
+
+            <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2 text-center">
+              <div className="font-semibold">{property.bathrooms}</div>
+              <div>Bathrooms</div>
+            </div>
+
+            <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2 text-center">
+              <div className="font-semibold">{property.area_size}</div>
+              <div>Sqft</div>
+            </div>
+          </div>
+
+          <div className="mt-3 text-[11px] text-zinc-500">
+            📍 {property.latitude}, {property.longitude}
           </div>
         </div>
 

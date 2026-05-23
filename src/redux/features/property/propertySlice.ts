@@ -4,7 +4,7 @@ import { Property } from "../../../types/propertyTypes";
 
 import {
   fetchProperties,
-  createProperty,
+  createPropertyThunk,
   updatePropertyThunk,
   deletePropertyThunk,
 } from "./propertyThunk";
@@ -47,7 +47,7 @@ const propertySlice = createSlice({
         state.error = "Failed to load properties";
       })
 
-      .addCase(createProperty.fulfilled, (state, action) => {
+      .addCase(createPropertyThunk.fulfilled, (state, action) => {
         state.properties.push(action.payload);
       })
 

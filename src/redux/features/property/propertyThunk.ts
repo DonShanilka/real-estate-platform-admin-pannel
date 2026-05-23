@@ -9,11 +9,11 @@ export const fetchProperties = createAsyncThunk(
   },
 );
 
-export const createProperty = createAsyncThunk(
+export const createPropertyThunk = createAsyncThunk(
   "property/create",
-  async (property: Omit<Property, "id">) => {
+  async (property: Property) => {
     return await propertyApi.saveProperty(property);
-  },
+  }
 );
 
 export const updatePropertyThunk = createAsyncThunk(
