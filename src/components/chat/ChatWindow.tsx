@@ -3,7 +3,10 @@
 import { useEffect, useRef } from "react";
 import { useAppDispatch } from "@/src/hooks/useAppDispatch";
 import { useAppSelector } from "@/src/hooks/useAppSelector";
-import { fetchConversation, sendMessageThunk } from "@/src/redux/features/chat/chatThunk";
+import {
+  fetchConversation,
+  sendMessageThunk,
+} from "@/src/redux/features/chat/chatThunk";
 import type { Message } from "@/src/redux/features/chat/chatSlice";
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
@@ -14,7 +17,9 @@ const CURRENT_USER_ID = 3;
 
 export default function ChatWindow() {
   const dispatch = useAppDispatch();
-  const { conversations, selectedUserId, loading } = useAppSelector((s) => s.chat);
+  const { conversations, selectedUserId, loading } = useAppSelector(
+    (s) => s.chat,
+  );
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,13 +67,17 @@ export default function ChatWindow() {
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-50 dark:bg-zinc-950">
         {loading && (
           <div className="flex justify-center">
-            <span className="text-xs text-zinc-400 animate-pulse">Loading messages…</span>
+            <span className="text-xs text-zinc-400 animate-pulse">
+              Loading messages…
+            </span>
           </div>
         )}
 
         {!loading && conversations.length === 0 && (
           <div className="flex justify-center">
-            <span className="text-xs text-zinc-400">No messages yet. Say hi!</span>
+            <span className="text-xs text-zinc-400">
+              No messages yet. Say hi!
+            </span>
           </div>
         )}
 
