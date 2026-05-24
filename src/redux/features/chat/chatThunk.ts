@@ -1,18 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as api from "@/src/lib/api/chatApi";
 
-export const fetchMyChats = createAsyncThunk(
-  "chat/myChats",
-  async () => {
-    return await api.getMyChat();
-  }
-);
+export const fetchMyChats = createAsyncThunk("chat/myChats", async () => {
+  return await api.getMyChat();
+});
 
 export const fetchConversation = createAsyncThunk(
   "chat/conversation",
   async (userId: number) => {
     return await api.getConversation(userId);
-  }
+  },
 );
 
 export const sendMessageThunk = createAsyncThunk(
@@ -20,7 +17,8 @@ export const sendMessageThunk = createAsyncThunk(
   async (data: {
     receiver_id: number;
     message: string;
+    property_id?: number;
   }) => {
-    return await api.sendMessage(data as any);
-  }
+    return await api.sendMessage(data);
+  },
 );
