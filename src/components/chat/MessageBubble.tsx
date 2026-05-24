@@ -10,8 +10,8 @@ export default function MessageBubble({ message, isMine, time }: Props) {
       <div
         className={`max-w-sm lg:max-w-md px-4 py-3 rounded-2xl text-sm shadow-sm ${
           isMine
-            ? "bg-rose-600 text-white rounded-tr-none"
-            : "bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-tl-none text-zinc-900 dark:text-zinc-100"
+            ? "bg-rose-600 text-white rounded-br-none"
+            : "bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-bl-none text-zinc-900 dark:text-zinc-100"
         }`}
       >
         <p className="leading-relaxed break-words">{message}</p>

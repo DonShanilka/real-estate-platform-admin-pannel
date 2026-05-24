@@ -9,16 +9,16 @@ export const fetchConversation = createAsyncThunk(
   "chat/conversation",
   async (userId: number) => {
     return await api.getConversation(userId);
-  },
+  }
 );
 
 export const sendMessageThunk = createAsyncThunk(
   "chat/send",
   async (data: {
     receiver_id: number;
+    property_id: number;
     message: string;
-    property_id?: number;
   }) => {
     return await api.sendMessage(data);
-  },
+  }
 );

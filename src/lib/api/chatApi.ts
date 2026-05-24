@@ -12,11 +12,11 @@ export const getConversation = async (otherUserId: number) => {
 
 export const sendMessage = async (data: {
   receiver_id: number;
-  property_id?: number;
+  property_id: number;
   message: string;
 }) => {
   const response = await axios.post("/chat/send", {
-    reciver_id: data.receiver_id,
+    receiver_id: data.receiver_id,
     property_id: data.property_id,
     message: data.message,
   });
