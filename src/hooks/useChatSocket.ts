@@ -1,28 +1,33 @@
-"use client"
+"use client";
 
-import {useEffect} from "react";
-import {useDispatch} from "react-redux";
-import {addMessage} from "@/src/redux/features/chat/chatSlice";
+import { useEffect } from "react";
+import { useAppDispatch } from "@/src/hooks/useAppDispatch";
+import { addMessage } from "@/src/redux/features/chat/chatSlice";
+import type { Message } from "@/src/redux/features/chat/chatSlice";
 
-export const useChatSocket = (userId: number) => {
+export default function useChatSocket(userId: number | null) {
+  const dispatch = useAppDispatch();
 
-    const dispatch = useDispatch();
+  useEffect(() => {
+    if (!userId) return;
 
-    useEffect(() => {
-        const ws = new WebSocket(
-            `ws://127.0.0.1:8000/ws/${userId}`
-        );
+    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}`);
 
-        ws.onmessage = (event) => {
-            const data = JSON.parse(
-                event.data
-            );
+    ws.onmessage = (event) => {
+      try {
+        const data: Message = JSON.parse(event.data);
+        dispatch(addMessage(data));
+      } catch {
+        console.error("Failed to parse WebSocket message", event.data);
+      }
+    };
 
-            dispatch(addMessage(data));
-        };
+    ws.onerror = (err) => {
+      console.error("WebSocket error:", err);
+    };
 
-        return () => {
-            ws.close();
-        };
-    }, [userId]);
-};
+    return () => {
+      ws.close();
+    };
+  }, [userId, dispatch]);
+}
