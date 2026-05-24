@@ -33,17 +33,39 @@ const initialState: ChatState = {
   error: null,
 };
 
+const CURRENT_USER_ID = 3;
+
+function deduplicateChatList(chats: ChatItem[]): ChatItem[] {
+  const seen = new Map<number, ChatItem>();
+
+  for (const chat of chats) {
+    // Always key by the OTHER user's id
+    const otherUserId =
+      chat.sender_id === CURRENT_USER_ID ? chat.receiver_id : chat.sender_id;
+
+    if (!seen.has(otherUserId)) {
+      seen.set(otherUserId, chat);
+    } else {
+      // Keep the most recent message for this user
+      const existing = seen.get(otherUserId)!;
+      if (new Date(chat.created_at) > new Date(existing.created_at)) {
+        seen.set(otherUserId, chat);
+      }
+    }
+  }
+
+  return Array.from(seen.values());
+}
+
 const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {
     selectUser: (state, action: PayloadAction<number>) => {
       state.selectedUserId = action.payload;
-      // Clear old conversation when switching users
       state.conversations = [];
     },
     addMessage: (state, action: PayloadAction<Message>) => {
-      // Avoid duplicate messages
       const exists = state.conversations.some((m) => m.id === action.payload.id);
       if (!exists) {
         state.conversations.push(action.payload);
@@ -51,21 +73,20 @@ const chatSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // fetchMyChats
     builder.addCase(fetchMyChats.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
     builder.addCase(fetchMyChats.fulfilled, (state, action) => {
       state.loading = false;
-      state.chatList = action.payload;
+      // Deduplicate so same user only appears once in sidebar
+      state.chatList = deduplicateChatList(action.payload);
     });
     builder.addCase(fetchMyChats.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message ?? "Failed to fetch chats";
     });
 
-    // fetchConversation
     builder.addCase(fetchConversation.pending, (state) => {
       state.loading = true;
       state.error = null;
@@ -79,7 +100,6 @@ const chatSlice = createSlice({
       state.error = action.error.message ?? "Failed to fetch conversation";
     });
 
-    // sendMessageThunk
     builder.addCase(sendMessageThunk.fulfilled, (state, action) => {
       if (action.payload) {
         const exists = state.conversations.some((m) => m.id === action.payload.id);
