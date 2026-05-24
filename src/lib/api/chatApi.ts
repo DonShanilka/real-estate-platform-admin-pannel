@@ -7,16 +7,18 @@ export const getMyChat = async () => {
 
 export const getConversation = async (otherUserId: number) => {
   const response = await axios.get(`/chat/conversation/${otherUserId}`);
-
   return response.data;
 };
 
 export const sendMessage = async (data: {
-  reciver_id: number;
+  receiver_id: number;
   property_id?: number;
   message: string;
 }) => {
-  const response = await axios.post("/chat/send", data);
-
+  const response = await axios.post("/chat/send", {
+    reciver_id: data.receiver_id,
+    property_id: data.property_id,
+    message: data.message,
+  });
   return response.data;
 };
