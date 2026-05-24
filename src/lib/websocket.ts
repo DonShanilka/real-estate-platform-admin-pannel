@@ -10,9 +10,7 @@ export default function useChatSocket(userId: number | null) {
   useEffect(() => {
     if (!userId) return;
 
-    const ws = new WebSocket(
-      `ws://127.0.0.1:8000/ws/${userId}`
-    );
+    const ws = new WebSocket(`ws://127.0.0.1:8000/ws/${userId}`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
