@@ -9,11 +9,10 @@ import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 
+// Must match JWT user_id claim
 const CURRENT_USER_ID = 3;
 
 interface Props {
-  // Pass the property context from wherever the chat is opened
-  // e.g. a property listing page passes its propertyId here
   propertyId?: number;
 }
 
@@ -65,11 +64,13 @@ export default function ChatWindow({ propertyId = 1 }: Props) {
             <span className="text-xs text-zinc-400 animate-pulse">Loading messages…</span>
           </div>
         )}
+
         {!loading && conversations.length === 0 && (
           <div className="flex justify-center">
             <span className="text-xs text-zinc-400">No messages yet. Say hi!</span>
           </div>
         )}
+
         {conversations.map((msg: Message) => (
           <MessageBubble
             key={msg.id}
@@ -78,9 +79,12 @@ export default function ChatWindow({ propertyId = 1 }: Props) {
               hour: "2-digit",
               minute: "2-digit",
             })}
+            // sender_id === CURRENT_USER_ID → my message → RIGHT side
+            // sender_id !== CURRENT_USER_ID → their message → LEFT side
             isMine={msg.sender_id === CURRENT_USER_ID}
           />
         ))}
+
         <div ref={bottomRef} />
       </div>
 

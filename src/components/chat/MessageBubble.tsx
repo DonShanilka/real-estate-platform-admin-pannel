@@ -6,12 +6,14 @@ interface Props {
 
 export default function MessageBubble({ message, isMine, time }: Props) {
   return (
-    <div className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+    // isMine = I sent it  → right side (justify-end)
+    // !isMine = they sent → left side  (justify-start)
+    <div className={`flex w-full ${isMine ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-sm lg:max-w-md px-4 py-3 rounded-2xl text-sm shadow-sm ${
+        className={`max-w-sm lg:max-w-md px-4 py-3 text-sm shadow-sm ${
           isMine
-            ? "bg-rose-600 text-white rounded-br-none"
-            : "bg-white dark:bg-zinc-800 border dark:border-zinc-700 rounded-bl-none text-zinc-900 dark:text-zinc-100"
+            ? "bg-rose-600 text-white rounded-2xl rounded-br-none"
+            : "bg-white dark:bg-zinc-800 border dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-2xl rounded-bl-none"
         }`}
       >
         <p className="leading-relaxed break-words">{message}</p>
