@@ -1,37 +1,43 @@
 "use client";
 
 import { useState } from "react";
+import { Icons } from "@/src/components/layout/Icons";
 
 interface Props {
   onSend: (message: string) => void;
 }
 
 export default function MessageInput({ onSend }: Props) {
-    
-  const [text, setText] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSend = () => {
-    if (!text.trim()) return;
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    onSend(text);
+    if (!message.trim()) return;
 
-    setText("");
+    onSend(message);
+
+    setMessage("");
   };
 
   return (
-    <div className="flex gap-2 p-4">
+    <form
+      onSubmit={submit}
+      className="p-4 border-t border-zinc-200 flex gap-2 bg-white dark:bg-zinc-900"
+    >
       <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        className="flex-1 border rounded-lg px-4"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type message..."
+        className=" flex-1 rounded-xl border border-zinc-200 px-4 py-2 text-sm"
       />
 
       <button
-        onClick={handleSend}
-        className="px-4 bg-black text-white rounded-lg"
+        type="submit"
+        className=" p-3 rounded-xl bg-gradient-to-r from-rose-600 to-amber-50 text-whit "
       >
-        Send
+        <Icons.Send size={16} />
       </button>
-    </div>
+    </form>
   );
 }
