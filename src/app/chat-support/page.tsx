@@ -8,17 +8,17 @@ import useChatSocket from "@/src/hooks/useChatSocket";
 import ChatSidebar from "@/src/components/chat/ChatSidebar";
 import ChatWindow from "@/src/components/chat/ChatWindow";
 
-const CURRENT_USER_ID = 3;
-
 export default function ChatPage() {
   const dispatch = useAppDispatch();
+  const { user, token } = useAppSelector((state) => state.auth); // Assuming you have auth slice
+
+  const currentUserId = user?.id || 1;
 
   useEffect(() => {
     dispatch(fetchMyChats());
   }, [dispatch]);
 
-  // WebSocket ONLY connects here on the chat page, not globally
-  useChatSocket(CURRENT_USER_ID);
+  useChatSocket({ currentUserId, token });
 
   return (
     <div className="h-[calc(100vh-120px)] flex bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden border dark:border-zinc-800 shadow-sm">
