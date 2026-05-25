@@ -8,7 +8,6 @@ import useChatSocket from "@/src/hooks/useChatSocket";
 import ChatSidebar from "@/src/components/chat/ChatSidebar";
 import ChatWindow from "@/src/components/chat/ChatWindow";
 
-// Matches JWT user_id: 3
 const CURRENT_USER_ID = 3;
 
 export default function ChatPage() {

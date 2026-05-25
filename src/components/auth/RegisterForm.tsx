@@ -13,19 +13,28 @@ export default function RegisterForm() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
 
     try {
       await authApi.register(formData);
-      setSuccess('Account created successfully! Redirecting...');
-      setTimeout(() => router.push('/auth/login'), 1800);
+      setSuccess('Registration successful! Redirecting to login...');
+      
+      // Auto navigate to login after success
+      setTimeout(() => {
+        router.push('/auth/login');
+      }, 1800);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Registration failed');
+      setError(err.response?.data?.detail || 'Registration failed. Try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,10 +81,18 @@ export default function RegisterForm() {
 
       <button
         type="submit"
-        className="w-full py-4 bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white font-semibold rounded-2xl transition-all duration-200 text-lg shadow-lg shadow-rose-500/30"
+        disabled={loading}
+        className="w-full py-4 bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-700 hover:to-amber-600 disabled:opacity-70 text-white font-semibold rounded-2xl transition-all duration-200 text-lg shadow-lg shadow-rose-500/30"
       >
-        Create Admin Account
+        {loading ? 'Creating Account...' : 'Create Admin Account'}
       </button>
+
+      <p className="text-center text-sm text-gray-500">
+        Already have an account?{' '}
+        <a href="/auth/login" className="text-amber-600 hover:underline font-medium">
+          Login here
+        </a>
+      </p>
     </form>
   );
 }
