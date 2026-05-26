@@ -12,7 +12,7 @@ export default function ChatPage() {
   const dispatch = useAppDispatch();
   const { user, token } = useAppSelector((state) => state.auth); // Assuming you have auth slice
 
-  const currentUserId = user?.id || 1;
+  const currentUserId = user?.id || 2;
 
   useEffect(() => {
     dispatch(fetchMyChats());
