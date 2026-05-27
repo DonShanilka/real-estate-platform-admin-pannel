@@ -13,7 +13,7 @@ instance.interceptors.request.use((config) => {
   const token =
     typeof window !== "undefined"
       ? localStorage.getItem("token") ??
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJyb2xlIjoiQURNSU4iLCJleHAiOjE3Nzk3NjIzMjR9.uBEDNuNeEZP_i1pRB8GixUshLs3XBzv2-21lnp8hQIs"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJyb2xlIjoiQURNSU4iLCJleHAiOjE3Nzk5MjgwODZ9.wrwIxgLsktDIaR2NK43M3IVteiwoH9tVyQ9hXWHLXik"
       : "";
 
   if (token) {

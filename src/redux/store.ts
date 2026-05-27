@@ -3,7 +3,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import propertyReducer from "./features/property/propertySlice";
 import chatReducer from "./features/chat/chatSlice";
 import authReducer from "./features/auth/authSlice";   
-import bookingReducer from "./features/bookings/bookingsSlice"
+import bookingReducer from "./features/bookings/bookingsSlice";
+import reviewsReducer from "./features/reviews/reviewsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     chat: chatReducer,
     auth: authReducer,
     bookings: bookingReducer,
+    reviews: reviewsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
