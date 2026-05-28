@@ -1,4 +1,4 @@
-import { Property } from "../../../types/propertyTypes";
+import { Property } from "../../types/propertyTypes";
 
 const BASE_URL = "http://127.0.0.1:8000";
 

@@ -1,10 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icons } from "@/src/components/layout/Icons";
+import { useAppDispatch } from "@/src/hooks/useAppDispatch";
+import { useAppSelector } from "@/src/hooks/useAppSelector";
+import { fetchReviewsThunk } from "@/src/redux/features/reviews/reviewsThunk";
+import { setActiveTab, updateLocalReviewStatus } from "@/src/redux/features/reviews/reviewsSlice";
 
 interface Review {
   id: string;
+  dbId: number;
   reviewer: string;
   reviewerRole: "Guest" | "Buyer";
   property: string;
@@ -14,23 +19,98 @@ interface Review {
   status: "Pending" | "Approved" | "Rejected";
 }
 
-const initialReviews: Review[] = [
-  { id: "REV-501", reviewer: "James Anderson", reviewerRole: "Guest", property: "Oceanfront Glass Penthouse", rating: 5, comment: "Absolutely breathtaking views and top-notch service! Highly recommend this beach retreat. The amenities were pristine.", date: "May 18, 2026", status: "Pending" },
-  { id: "REV-502", reviewer: "Sophia Martinez", reviewerRole: "Guest", property: "Modernist Forest Oasis Villa", rating: 4, comment: "Beautiful scenery, very relaxing atmosphere. The hot tub worked perfectly. Minor wifi speed issues resolved quickly by support.", date: "May 17, 2026", status: "Approved" },
-  { id: "REV-503", reviewer: "Emma Watson", reviewerRole: "Buyer", property: "Luxury Downtown Highrise Apartment", rating: 5, comment: "Stunning interior architecture, extremely clean, great central location. Agent was incredibly professional throughout.", date: "May 15, 2026", status: "Approved" },
-  { id: "REV-504", reviewer: "Michael Chen", reviewerRole: "Guest", property: "Chic Eastside Craftsman House", rating: 2, comment: "Location was good, but the property cleanliness was subpar. Mold in bathrooms and stained rugs. Not worth the high price.", date: "May 14, 2026", status: "Rejected" },
-  { id: "REV-505", reviewer: "Jessica Taylor", reviewerRole: "Guest", property: "Sunset Skyline Penthouse", rating: 5, comment: "Incredible design, central spot, gorgeous pool deck. One of the best penthouse rentals I've stayed in so far.", date: "May 12, 2026", status: "Pending" },
-];
-
 export default function ReviewsModeration() {
-  const [reviews, setReviews] = useState<Review[]>(initialReviews);
-  const [activeTab, setActiveTab] = useState<"All" | "Pending" | "Approved" | "Rejected">("All");
+  const dispatch = useAppDispatch();
+  const { items: rawReviews, loading, error, activeTab } = useAppSelector((state) => state.reviews);
+  
+  // Track status updates reactively in local state mapped to database IDs
+  const [statuses, setStatuses] = useState<Record<number, "Pending" | "Approved" | "Rejected">>({});
+
+  useEffect(() => {
+    dispatch(fetchReviewsThunk());
+  }, [dispatch]);
+
+  // Load persisted statuses from localStorage when rawReviews finishes fetching
+  useEffect(() => {
+    const initialStatuses: Record<number, "Pending" | "Approved" | "Rejected"> = {};
+    rawReviews.forEach((item) => {
+      const stored = localStorage.getItem(`review_status_${item.id}`);
+      initialStatuses[item.id] = (stored === "Approved" || stored === "Rejected") ? stored : "Pending";
+    });
+    setStatuses(initialStatuses);
+  }, [rawReviews]);
 
   const updateReviewStatus = (id: string, newStatus: "Approved" | "Rejected") => {
-    setReviews(reviews.map((r) => (r.id === id ? { ...r, status: newStatus } : r)));
+    // Extract DB numeric ID from "REV-X" string
+    const dbId = parseInt(id.replace("REV-", ""), 10);
+    if (!isNaN(dbId)) {
+      localStorage.setItem(`review_status_${dbId}`, newStatus);
+      setStatuses((prev) => ({ ...prev, [dbId]: newStatus }));
+      dispatch(updateLocalReviewStatus({ id: dbId, status: newStatus }));
+    }
   };
 
+  // Map backend model structures dynamically to match UI keys perfectly
+  const reviews: Review[] = rawReviews.map((item) => ({
+    id: `REV-${item.id}`,
+    dbId: item.id,
+    reviewer: item.user?.full_name || item.user?.name || "Anonymous",
+    reviewerRole: (item.user?.role || "Guest") as "Guest" | "Buyer",
+    property: item.property?.title || `Property #${item.property_id}`,
+    rating: item.rating,
+    comment: item.comment || "No comment provided",
+    date: item.create_at ? new Date(item.create_at).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }) : "Recent",
+    status: statuses[item.id] || "Pending",
+  }));
+
   const filteredReviews = reviews.filter((r) => activeTab === "All" || r.status === activeTab);
+
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        {/* Moderation Status Tabs Skeleton */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4">
+          <div className="flex gap-2">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-8 w-20 bg-zinc-200 dark:bg-zinc-800 rounded-lg" />
+            ))}
+          </div>
+          <div className="h-4 w-28 bg-zinc-200 dark:bg-zinc-800 rounded" />
+        </div>
+
+        {/* Reviews Feed Skeleton */}
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm dark:bg-zinc-900 dark:border-zinc-800"
+            >
+              <div className="flex gap-3">
+                <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 w-32 bg-zinc-200 dark:bg-zinc-800 rounded" />
+                  <div className="h-3 w-20 bg-zinc-100 dark:bg-zinc-850 rounded" />
+                </div>
+              </div>
+              <div className="mt-4 h-12 w-full bg-zinc-100 dark:bg-zinc-850 rounded-xl" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-600 rounded-2xl p-8 text-center font-semibold dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-400">
+        ⚠️ Failed to load reviews: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -40,7 +120,7 @@ export default function ReviewsModeration() {
           {(["All", "Pending", "Approved", "Rejected"] as const).map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => dispatch(setActiveTab(tab))}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                 activeTab === tab
                   ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow"
@@ -85,11 +165,11 @@ export default function ReviewsModeration() {
                 <div className="flex items-center gap-1.5">
                   <div className="flex text-amber-500">
                     {Array.from({ length: 5 }).map((_, i) => {
-                      const StarIcon = i < rev.rating ? Icons.StarFilled : Icons.Star;
+                      const StarIcon = i < Math.round(rev.rating) ? Icons.StarFilled : Icons.Star;
                       return <StarIcon key={i} size={14} />;
                     })}
                   </div>
-                  <span className="text-xs font-bold text-zinc-500">({rev.rating}.0)</span>
+                  <span className="text-xs font-bold text-zinc-500">({rev.rating.toFixed(1)})</span>
                 </div>
               </div>
 
