@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 
@@ -9,6 +10,12 @@ interface AdminLayoutShellProps {
 }
 
 export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/auth/")) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-zinc-50 dark:bg-black font-sans">
       

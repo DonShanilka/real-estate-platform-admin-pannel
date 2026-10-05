@@ -18,7 +18,10 @@ export interface ChatState {
   conversations: Message[];
   chatList: Message[];
   selectedUserId: number | null;
-
+  selectedPropertyId: number | null;
   loading: boolean;
+  chatListLoading: boolean;
+  sending: boolean;
+  isDemoConversation: boolean;
   error: string | null;
 }

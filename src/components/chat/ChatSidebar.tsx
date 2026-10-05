@@ -2,39 +2,91 @@
 
 import { useAppDispatch } from "@/src/hooks/useAppDispatch";
 import { useAppSelector } from "@/src/hooks/useAppSelector";
-import { selectUser } from "@/src/redux/features/chat/chatSlice";
+import {
+  DEMO_BUYER_ID,
+  openDemoBuyerConversation,
+  selectUser,
+} from "@/src/redux/features/chat/chatSlice";
+import { fetchConversation } from "@/src/redux/features/chat/chatThunk";
+import type { Message } from "@/src/types/chat";
 
-export default function ChatSidebar() {
+interface Props {
+  currentUserId: number | null;
+}
+
+export default function ChatSidebar({ currentUserId }: Props) {
   const dispatch = useAppDispatch();
-  
-  // Get current logged-in user from auth state (Dynamic)
-  const currentUserId = useAppSelector((state) => state.auth?.user?.id) || 3;
-  const { chatList, selectedUserId, loading } = useAppSelector((state) => state.chat);
+  const { chatList, selectedUserId, chatListLoading, error } = useAppSelector((state) => state.chat);
+
+  const latestByUser = new Map<number, Message>();
+  if (currentUserId !== null) {
+    for (const message of chatList) {
+      const otherUserId = String(message.sender_id) === String(currentUserId)
+        ? message.receiver_id
+        : message.sender_id;
+      const normalizedOtherUserId = Number(otherUserId);
+      if (!Number.isInteger(normalizedOtherUserId) || normalizedOtherUserId <= 0) continue;
+      const latest = latestByUser.get(normalizedOtherUserId);
+      if (!latest || new Date(message.created_at).getTime() >= new Date(latest.created_at).getTime()) {
+        latestByUser.set(normalizedOtherUserId, message);
+      }
+    }
+  }
+  const conversations = [...latestByUser.entries()].sort(
+    ([, first], [, second]) => new Date(second.created_at).getTime() - new Date(first.created_at).getTime(),
+  );
 
   return (
-    <div className="w-80 border-r overflow-y-auto flex-shrink-0 bg-white dark:bg-zinc-900">
+    <div className="w-full overflow-y-auto border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 md:w-80 md:shrink-0">
       <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
         <h2 className="font-bold text-sm uppercase tracking-wider text-zinc-500">
           Messages
         </h2>
       </div>
 
-      {loading && chatList.length === 0 ? (
+      {currentUserId === null ? (
+        <div className="p-4 text-sm text-zinc-400">Sign in with an account that has a numeric user ID to view conversations.</div>
+      ) : chatListLoading && chatList.length === 0 ? (
         <div className="p-4 text-sm text-zinc-400">Loading chats…</div>
-      ) : chatList.length === 0 ? (
-        <div className="p-4 text-sm text-zinc-500">No chats yet</div>
+      ) : error && chatList.length === 0 ? (
+        <div className="p-4 text-sm text-rose-500">{error}</div>
+      ) : conversations.length === 0 ? (
+        <div className="space-y-3 p-4">
+          <p className="text-sm text-zinc-500">No real chats yet. Open this sample to preview buyer messages.</p>
+          <button
+            type="button"
+            onClick={() => dispatch(openDemoBuyerConversation({
+              adminUserId: currentUserId,
+              timestamp: new Date().toISOString(),
+            }))}
+            className="w-full rounded-xl border border-zinc-200 p-3 text-left transition hover:border-rose-300 hover:bg-rose-50 dark:border-zinc-700 dark:hover:bg-rose-950/30"
+          >
+            <span className="block text-sm font-semibold text-zinc-800 dark:text-zinc-100">Sample Buyer</span>
+            <span className="mt-1 block truncate text-xs text-zinc-500">Is it still available for a viewing this weekend?</span>
+            <span className="mt-2 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800 dark:bg-amber-950 dark:text-amber-200">DEMO</span>
+          </button>
+        </div>
       ) : (
-        chatList.map((chat, index) => {
-          // Dynamically determine the OTHER user
-          const otherUserId =
-            chat.sender_id === currentUserId ? chat.receiver_id : chat.sender_id;
-
+        conversations.map(([otherUserId, chat]) => {
           const isSelected = selectedUserId === otherUserId;
+          const isDemo = otherUserId === DEMO_BUYER_ID;
 
           return (
             <button
-              key={chat.id ?? index}
-              onClick={() => dispatch(selectUser(otherUserId))}
+              key={otherUserId}
+              type="button"
+              aria-pressed={isSelected}
+              onClick={() => {
+                if (isDemo) {
+                  dispatch(openDemoBuyerConversation({
+                    adminUserId: currentUserId,
+                    timestamp: new Date().toISOString(),
+                  }));
+                  return;
+                }
+                dispatch(selectUser({ userId: otherUserId, propertyId: chat.property_id ?? null }));
+                dispatch(fetchConversation(otherUserId));
+              }}
               className={`w-full p-4 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800 border-l-2 border-transparent ${
                 isSelected
                   ? "bg-rose-50 dark:bg-rose-950 border-l-rose-500"
@@ -43,12 +95,12 @@ export default function ChatSidebar() {
             >
               <div className="flex items-center gap-3">
                 {/* Avatar */}
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-rose-500 to-amber-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                  U{otherUserId}
+                <div className="w-9 h-9 rounded-full bg-linear-to-br from-rose-500 to-amber-400 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                  {isDemo ? "B" : `U${otherUserId}`}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-sm">User {otherUserId}</div>
+                  <div className="font-semibold text-sm">{isDemo ? "Sample Buyer" : `User ${otherUserId}`}</div>
                   <div className="text-xs text-zinc-500 truncate">
                     {chat.message}
                   </div>

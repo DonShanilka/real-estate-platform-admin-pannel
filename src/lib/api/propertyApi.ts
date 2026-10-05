@@ -80,20 +80,15 @@ export const propertyApi = {
 },
 
   async deleteProperty(id: number) {
-    try {
-      await fetch(`${BASE_URL}/properties/deleteProperty/${id}`, {
-        method: "DELETE",
-      });
+    const response = await fetch(`${BASE_URL}/properties/deleteProperty/${id}`, {
+      method: "DELETE",
+    });
 
-      return id;
-    } catch {
-      const db = getFallbackDB();
-
-      const updated = db.filter((p) => p.id !== id);
-
-      saveFallbackDB(updated);
-
-      return id;
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      throw new Error(error?.detail || "Failed to delete property");
     }
+
+    return id;
   },
 };

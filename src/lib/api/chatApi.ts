@@ -1,24 +1,21 @@
 import axios from "@/src/lib/axios";
+import type { Message } from "@/src/types/chat";
 
-export const getMyChat = async () => {
-  const response = await axios.get("/chat/my");
+export const getMyChat = async (): Promise<Message[]> => {
+  const response = await axios.get<Message[]>("/chat/my");
   return response.data;
 };
 
-export const getConversation = async (otherUserId: number) => {
-  const response = await axios.get(`/chat/conversation/${otherUserId}`);
+export const getConversation = async (otherUserId: number): Promise<Message[]> => {
+  const response = await axios.get<Message[]>(`/chat/conversation/${otherUserId}`);
   return response.data;
 };
 
 export const sendMessage = async (data: {
   receiver_id: number;
-  property_id: number;
+  property_id?: number;
   message: string;
-}) => {
-  const response = await axios.post("/chat/send", {
-    receiver_id: data.receiver_id,
-    property_id: data.property_id,
-    message: data.message,
-  });
+}): Promise<Message> => {
+  const response = await axios.post<Message>("/chat/send", data);
   return response.data;
 };

@@ -25,10 +25,12 @@ export default function BookingFilters({
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4">
       {/* Status tabs */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filter bookings by status">
         {STATUS_OPTIONS.map(({ value, label }) => (
           <button
             key={value}
+            type="button"
+            aria-pressed={statusFilter === value}
             onClick={() => onStatusFilterChange(value)}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
               statusFilter === value
@@ -54,12 +56,14 @@ export default function BookingFilters({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          aria-hidden="true"
         >
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
         <input
-          type="text"
+          type="search"
+          aria-label="Search bookings"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search guest or property title..."

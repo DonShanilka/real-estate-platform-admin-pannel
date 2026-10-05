@@ -1,8 +1,6 @@
 import { RootState } from "@/src/redux/store";
 import { createSelector } from "@reduxjs/toolkit";
 
-const selectBookingsState = (state: RootState) => state.bookings;
-
 export const selectAllBookings = (state: RootState) => state.bookings.items;
 export const selectBookingsLoading = (state: RootState) => state.bookings.loading;
 export const selectBookingsError = (state: RootState) => state.bookings.error;
@@ -15,9 +13,9 @@ export const selectFilteredBookings = createSelector(
   selectStatusFilter,
   selectSearchQuery,
   (items, statusFilter, searchQuery) => {
-    const q = searchQuery.toLowerCase();
+    const q = searchQuery.trim().toLowerCase();
 
-    return items.filter((b:any) => {
+    return items.filter((b) => {
       const matchesStatus =
         statusFilter === "all" || b.status === statusFilter;
 
