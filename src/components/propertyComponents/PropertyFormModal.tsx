@@ -39,8 +39,8 @@ export function PropertyFormModal({
     city: "",
     district: "",
     country: "Sri Lanka",
-    latitude: 0,
-    longitude: 0,
+    latitude: null as number | null,
+    longitude: null as number | null,
     owner_id: 1,
   };
 
@@ -64,8 +64,8 @@ export function PropertyFormModal({
         city: property.city || "",
         district: property.district || "",
         country: property.country || "Sri Lanka",
-        latitude: property.latitude || 0,
-        longitude: property.longitude || 0,
+        latitude: property.latitude ?? null,
+        longitude: property.longitude ?? null,
         owner_id: property.owner_id || 1,
       });
     } else {
@@ -92,9 +92,12 @@ export function PropertyFormModal({
       "longitude",
       "owner_id",
     ];
+    const coordinateField = name === "latitude" || name === "longitude";
     setFormData((prev) => ({
       ...prev,
-      [name]: numberFields.includes(name) ? parseFloat(value) || 0 : value,
+      [name]: coordinateField
+        ? value.trim() === "" ? null : parseFloat(value)
+        : numberFields.includes(name) ? parseFloat(value) || 0 : value,
     }));
   };
 
@@ -120,8 +123,10 @@ export function PropertyFormModal({
   data.append("district", formData.district);
   data.append("country", formData.country);
 
-  data.append("latitude", String(formData.latitude));
-  data.append("longitude", String(formData.longitude));
+  if (formData.latitude !== null && formData.longitude !== null) {
+    data.append("latitude", String(formData.latitude));
+    data.append("longitude", String(formData.longitude));
+  }
 
   data.append("owner_id", String(formData.owner_id));
 
@@ -290,7 +295,7 @@ console.log(videoFile instanceof File);
                 type="number"
                 step="any"
                 name="latitude"
-                value={formData.latitude}
+                value={formData.latitude ?? ""}
                 onChange={handleChange}
               />
 
@@ -299,7 +304,7 @@ console.log(videoFile instanceof File);
                 type="number"
                 step="any"
                 name="longitude"
-                value={formData.longitude}
+                value={formData.longitude ?? ""}
                 onChange={handleChange}
               />
             </div>

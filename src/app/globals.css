@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 :root {
   --background: #ffffff;
@@ -23,4 +24,34 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.nearby-property-marker {
+  border: 0;
+  background: transparent;
+}
+
+.nearby-property-marker__pin {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #e11d48;
+  box-shadow: 0 3px 12px rgb(24 24 27 / 35%);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.nearby-property-marker:hover .nearby-property-marker__pin {
+  transform: scale(1.25);
+  background: #be123c;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  border-radius: 14px;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px;
 }

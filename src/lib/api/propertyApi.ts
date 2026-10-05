@@ -29,6 +29,26 @@ const saveFallbackDB = (data: Property[]) => {
 };
 
 export const propertyApi = {
+  async getNearbyProperties(
+    latitude: number,
+    longitude: number,
+    radiusKm = 10,
+    limit = 50,
+  ): Promise<{ property: Property; distance_km: number }[]> {
+    const params = new URLSearchParams({
+      latitude: String(latitude),
+      longitude: String(longitude),
+      radius_km: String(radiusKm),
+      limit: String(limit),
+    });
+    const response = await fetch(`${BASE_URL}/search/nearby?${params}`);
+    if (!response.ok) {
+      throw new Error("Could not search for nearby properties");
+    }
+    const result = await response.json();
+    return result.data;
+  },
+
   async getAllProperties(): Promise<Property[]> {
     try {
       const response = await fetch(`${BASE_URL}/properties/getAllProperty`);
