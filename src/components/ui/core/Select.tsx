@@ -16,7 +16,8 @@ export default function Select({ label, options, ...props }: SelectProps) {
       </label>
 
       <select {...props}
-        className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs font-medium focus:outline-none dark:bg-zinc-800 dark:border-zinc-700"
+        className="w-full px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs 
+        font-medium focus:outline-none dark:bg-zinc-50 dark:border-zinc-200"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

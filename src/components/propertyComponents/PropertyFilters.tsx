@@ -79,7 +79,9 @@ export default function PropertyFilters({
           value={searchQuery}
           onChange={handleSearch}
           placeholder="Search by title, listing ID, address, city or category type..."
-          className="w-full pl-10 pr-4 py-2 bg-white border border-zinc-200 text-zinc-800 rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-rose-500 focus:border-rose-500 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-200"
+          className="w-full pl-10 pr-4 py-2 bg-white border border-zinc-200 text-zinc-800 
+          rounded-xl text-xs font-medium focus:outline-none focus:ring-1 focus:ring-zinc-500 
+           transition-all dark:bg-zinc-50 dark:border-zinc-200 dark:text-zinc-200"
         />
       </div>
     </>

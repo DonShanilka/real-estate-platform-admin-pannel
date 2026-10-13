@@ -7,7 +7,7 @@ export default function PropertyEmptyState({ resetFilters }: Props) {
     <div className="text-center p-12">
       <p>No properties found.</p>
 
-      <button onClick={resetFilters} className="text-blue-600">
+      <button onClick={resetFilters} className="text-black">
         Reset Filters
       </button>
     </div>

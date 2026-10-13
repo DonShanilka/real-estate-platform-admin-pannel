@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Icons } from "@/src/components/layout/Icons";
+
 export default function Dashboard() {
   const [selectedRange, setSelectedRange] = useState("This Month");
 
@@ -12,7 +13,6 @@ export default function Dashboard() {
       change: "+12.4%",
       isPositive: true,
       icon: Icons.Properties,
-      gradient: "from-blue-500 to-indigo-600",
     },
     {
       label: "Active Bookings",
@@ -20,7 +20,6 @@ export default function Dashboard() {
       change: "+8.2%",
       isPositive: true,
       icon: Icons.Bookings,
-      gradient: "from-emerald-500 to-teal-600",
     },
     {
       label: "Monthly Revenue",
@@ -28,7 +27,6 @@ export default function Dashboard() {
       change: "+18.7%",
       isPositive: true,
       icon: Icons.Revenue,
-      gradient: "from-rose-500 to-amber-600",
     },
     {
       label: "Open Inquiries",
@@ -36,7 +34,6 @@ export default function Dashboard() {
       change: "-4.5%",
       isPositive: false,
       icon: Icons.Chat,
-      gradient: "from-violet-500 to-purple-600",
     },
   ];
 
@@ -83,7 +80,6 @@ export default function Dashboard() {
       price: "$1,850,000",
       rating: 4.9,
       views: 1842,
-      image: "/placeholder-prop1.jpg",
     },
     {
       id: 2,
@@ -92,7 +88,6 @@ export default function Dashboard() {
       price: "$980,000",
       rating: 4.8,
       views: 1422,
-      image: "/placeholder-prop2.jpg",
     },
     {
       id: 3,
@@ -101,67 +96,90 @@ export default function Dashboard() {
       price: "$720,000",
       rating: 4.7,
       views: 955,
-      image: "/placeholder-prop3.jpg",
+    },
+  ];
+
+  const tasks = [
+    {
+      id: 1,
+      text: "Approve pending agent applications (4)",
+      completed: false,
+    },
+    {
+      id: 2,
+      text: "Moderate user complaints under Reviews",
+      completed: false,
+    },
+    {
+      id: 3,
+      text: "Verify payout batch for early May cycle",
+      completed: true,
+    },
+    {
+      id: 4,
+      text: "Run automated favorites DB backup",
+      completed: true,
     },
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      {/* Top Banner section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-zinc-900 via-zinc-950 to-zinc-900 p-6 rounded-2xl border border-zinc-800 text-white shadow-xl shadow-zinc-950/20">
+    <div className="min-h-full space-y-8 bg-white text-black animate-in fade-in slide-in-from-bottom-2 duration-300">
+      {/* Welcome Banner */}
+      <section className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold">
+          <h2 className="text-xl font-bold text-black">
             Welcome back, Admin Panel Console!
           </h2>
-          <p className="text-zinc-400 text-xs mt-1">
+
+          <p className="mt-1 text-xs text-gray-500">
             Here is a quick overview of what is happening across the platform
             today.
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-zinc-800/80 p-1 rounded-lg border border-zinc-700/50 self-start sm:self-auto">
+
+        <div className="flex items-center gap-1 self-start rounded-lg border border-gray-200 bg-white p-1 sm:self-auto">
           {["This Week", "This Month", "Yearly"].map((range) => (
             <button
               key={range}
+              type="button"
               onClick={() => setSelectedRange(range)}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${
+              className={`rounded-md px-3 py-2 text-xs font-semibold transition-colors ${
                 selectedRange === range
-                  ? "bg-white text-zinc-950 shadow"
-                  : "text-zinc-400 hover:text-white"
+                  ? "bg-black text-white"
+                  : "bg-white text-gray-500 hover:bg-gray-100 hover:text-black"
               }`}
             >
               {range}
             </button>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, idx) => {
+      {/* Statistics Cards */}
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => {
           const IconComponent = stat.icon;
+
           return (
             <div
-              key={idx}
-              className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm flex items-start justify-between relative overflow-hidden group hover:shadow-md hover:border-zinc-300 transition-all dark:bg-zinc-900 dark:border-zinc-800 dark:hover:border-zinc-700"
+              key={stat.label}
+              className="group relative flex items-start justify-between overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
             >
-              {/* Card visual gradient accents */}
-              <div
-                className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${stat.gradient}`}
-              />
-
-              <div className="space-y-2">
-                <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+              <div className="space-y-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
                   {stat.label}
                 </span>
-                <h3 className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50">
+
+                <h3 className="text-3xl font-extrabold text-black">
                   {stat.value}
                 </h3>
+
                 <div className="flex items-center gap-1.5">
                   <span
-                    className={`flex items-center gap-0.5 text-xs font-bold px-1.5 py-0.5 rounded ${
+                    className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-bold ${
                       stat.isPositive
-                        ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400"
-                        : "bg-rose-50 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400"
+                        ? "bg-gray-100 text-black"
+                        : "bg-gray-100 text-gray-600"
                     }`}
                   >
                     {stat.isPositive ? (
@@ -169,103 +187,121 @@ export default function Dashboard() {
                     ) : (
                       <Icons.ArrowDown size={10} />
                     )}
+
                     {stat.change}
                   </span>
-                  <span className="text-[10px] text-zinc-400">
+
+                  <span className="text-[10px] text-gray-400">
                     vs prev month
                   </span>
                 </div>
               </div>
 
-              <div
-                className={`p-3 rounded-xl bg-gradient-to-tr ${stat.gradient} text-white shadow-lg shadow-indigo-500/10 group-hover:scale-110 transition-transform duration-200`}
-              >
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3 text-black transition-colors group-hover:bg-gray-100">
                 <IconComponent size={22} />
               </div>
             </div>
           );
         })}
-      </div>
+      </section>
 
-      {/* Charts & Properties section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* SVG Sparkline Analytics Chart */}
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm lg:col-span-2 space-y-4 dark:bg-zinc-900 dark:border-zinc-800">
-          <div className="flex items-center justify-between">
+      {/* Revenue Chart and Top Properties */}
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Revenue Chart */}
+        <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2">
+          <div className="flex items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
+              <h3 className="text-base font-bold text-black">
                 Revenue Stream Chart
               </h3>
-              <p className="text-xs text-zinc-400">
+
+              <p className="mt-1 text-xs text-gray-500">
                 Showing platform commission split & bookings yield
               </p>
             </div>
-            <span className="text-xs font-bold text-rose-500 bg-rose-50 px-2 py-1 rounded dark:bg-rose-950/20">
+
+            <span className="shrink-0 rounded-md border border-gray-200 bg-white px-2 py-1 text-xs font-semibold text-black">
               Live Sync
             </span>
           </div>
 
-          {/* Simple and elegant pure SVG Chart */}
-          <div className="h-64 w-full relative pt-4">
+          <div className="relative h-64 w-full pt-4">
             <svg
-              className="w-full h-full"
+              className="h-full w-full"
               viewBox="0 0 500 200"
               preserveAspectRatio="none"
+              role="img"
+              aria-label="Revenue stream chart"
             >
               <defs>
-                <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ef4444" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#ef4444" stopOpacity="0.0" />
+                <linearGradient
+                  id="revenueAreaGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="0%" stopColor="#000000" stopOpacity="0.12" />
+                  <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+                </linearGradient>
+
+                <linearGradient
+                  id="revenueLineGradient"
+                  x1="0"
+                  y1="0"
+                  x2="1"
+                  y2="0"
+                >
+                  <stop offset="0%" stopColor="#000000" />
+                  <stop offset="100%" stopColor="#737373" />
                 </linearGradient>
               </defs>
+
               {/* Grid Lines */}
               <line
                 x1="0"
                 y1="50"
                 x2="500"
                 y2="50"
-                stroke="#f4f4f5"
+                stroke="#e5e7eb"
                 strokeWidth="1"
-                className="dark:stroke-zinc-800"
               />
+
               <line
                 x1="0"
                 y1="100"
                 x2="500"
                 y2="100"
-                stroke="#f4f4f5"
+                stroke="#e5e7eb"
                 strokeWidth="1"
-                className="dark:stroke-zinc-800"
               />
+
               <line
                 x1="0"
                 y1="150"
                 x2="500"
                 y2="150"
-                stroke="#f4f4f5"
+                stroke="#e5e7eb"
                 strokeWidth="1"
-                className="dark:stroke-zinc-800"
               />
 
-              {/* Area Path */}
+              {/* Area */}
               <path
                 d="M 0 160 Q 100 120 180 140 T 300 70 T 400 90 T 500 40 L 500 200 L 0 200 Z"
-                fill="url(#gradient)"
+                fill="url(#revenueAreaGradient)"
               />
-              {/* Line Path */}
+
+              {/* Revenue Line */}
               <path
                 d="M 0 160 Q 100 120 180 140 T 300 70 T 400 90 T 500 40"
                 fill="none"
-                stroke="url(#lineGradient)"
+                stroke="url(#revenueLineGradient)"
                 strokeWidth="3.5"
                 strokeLinecap="round"
               />
-              <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#ef4444" />
-                <stop offset="100%" stopColor="#f59e0b" />
-              </linearGradient>
             </svg>
-            <div className="absolute bottom-0 left-0 w-full flex justify-between px-2 text-[10px] text-zinc-400 font-medium">
+
+            <div className="absolute bottom-0 left-0 flex w-full justify-between px-2 text-[10px] font-medium text-gray-400">
               <span>Jan</span>
               <span>Feb</span>
               <span>Mar</span>
@@ -275,100 +311,126 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Hot Properties */}
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm space-y-4 dark:bg-zinc-900 dark:border-zinc-800">
+        {/* Top Viewed Properties */}
+        <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div>
-            <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
+            <h3 className="text-base font-bold text-black">
               Top Viewed Properties
             </h3>
-            <p className="text-xs text-zinc-400">
+
+            <p className="mt-1 text-xs text-gray-500">
               Highly engaging property listings this week
             </p>
           </div>
 
           <div className="space-y-4">
-            {topProperties.map((prop) => (
-              <div key={prop.id} className="flex gap-3 items-center group">
-                <div className="w-12 h-12 bg-gradient-to-tr from-amber-500 to-rose-600 rounded-xl shrink-0 flex items-center justify-center text-white text-xs font-black shadow-md shadow-amber-500/10">
-                  {prop.title.substring(0, 2).toUpperCase()}
+            {topProperties.map((property) => (
+              <div
+                key={property.id}
+                className="group flex items-center gap-3"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-xs font-black text-black">
+                  {property.title.substring(0, 2).toUpperCase()}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate group-hover:text-rose-500 transition-colors">
-                    {prop.title}
+
+                <div className="min-w-0 flex-1">
+                  <h4 className="truncate text-xs font-semibold text-black transition-colors group-hover:underline">
+                    {property.title}
                   </h4>
-                  <span className="text-[10px] text-zinc-400 block">
-                    {prop.location} • {prop.price}
+
+                  <span className="mt-1 block text-[10px] text-gray-500">
+                    {property.location} • {property.price}
                   </span>
                 </div>
+
                 <div className="text-right">
-                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 justify-end">
-                    ★ {prop.rating}
+                  <span className="flex items-center justify-end gap-0.5 text-[10px] font-bold text-black">
+                    ★ {property.rating}
                   </span>
-                  <span className="text-[9px] text-zinc-400">
-                    {prop.views} views
+
+                  <span className="text-[9px] text-gray-400">
+                    {property.views.toLocaleString()} views
                   </span>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Bookings Schedule & Tasks Checklist */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Booking Table */}
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm lg:col-span-2 space-y-4 dark:bg-zinc-900 dark:border-zinc-800">
-          <div className="flex items-center justify-between">
+      {/* Recent Bookings and Tasks */}
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Recent Bookings Table */}
+        <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2">
+          <div className="flex items-center justify-between gap-3">
             <div>
-              <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
+              <h3 className="text-base font-bold text-black">
                 Recent Booking Schedules
               </h3>
-              <p className="text-xs text-zinc-400">
+
+              <p className="mt-1 text-xs text-gray-500">
                 Incoming guest reservations and payments
               </p>
             </div>
-            <button className="text-xs text-rose-500 font-semibold hover:underline">
+
+            <button
+              type="button"
+              className="shrink-0 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-black transition-colors hover:bg-gray-100"
+            >
               View All Bookings
             </button>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full border-collapse text-left text-xs">
               <thead>
-                <tr className="border-b border-zinc-100 dark:border-zinc-800 text-zinc-400 font-medium">
-                  <th className="py-2.5">ID</th>
-                  <th className="py-2.5">Guest</th>
-                  <th className="py-2.5">Property</th>
-                  <th className="py-2.5">Date</th>
-                  <th className="py-2.5">Price</th>
-                  <th className="py-2.5 text-right">Status</th>
+                <tr className="border-b border-gray-200 font-medium text-gray-500">
+                  <th className="py-3 pr-4">ID</th>
+                  <th className="py-3 pr-4">Guest</th>
+                  <th className="py-3 pr-4">Property</th>
+                  <th className="py-3 pr-4">Date</th>
+                  <th className="py-3 pr-4">Price</th>
+                  <th className="py-3 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-50 dark:divide-zinc-800/50 font-medium">
-                {recentBookings.map((b) => (
-                  <tr key={b.id} className="text-zinc-700 dark:text-zinc-300">
-                    <td className="py-3 text-zinc-400 font-mono">{b.id}</td>
-                    <td className="py-3 text-zinc-900 dark:text-zinc-100">
-                      {b.customer}
+
+              <tbody className="divide-y divide-gray-100">
+                {recentBookings.map((booking) => (
+                  <tr
+                    key={booking.id}
+                    className="text-gray-600 transition-colors hover:bg-gray-50"
+                  >
+                    <td className="whitespace-nowrap py-3 pr-4 font-mono text-gray-400">
+                      {booking.id}
                     </td>
-                    <td className="py-3 truncate max-w-[120px]">
-                      {b.property}
+
+                    <td className="whitespace-nowrap py-3 pr-4 font-semibold text-black">
+                      {booking.customer}
                     </td>
-                    <td className="py-3 text-zinc-400">{b.date}</td>
-                    <td className="py-3 font-semibold text-zinc-900 dark:text-zinc-100">
-                      {b.amount}
+
+                    <td className="max-w-[120px] truncate py-3 pr-4">
+                      {booking.property}
                     </td>
-                    <td className="py-3 text-right">
+
+                    <td className="whitespace-nowrap py-3 pr-4 text-gray-500">
+                      {booking.date}
+                    </td>
+
+                    <td className="whitespace-nowrap py-3 pr-4 font-semibold text-black">
+                      {booking.amount}
+                    </td>
+
+                    <td className="whitespace-nowrap py-3 text-right">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                          b.status === "Confirmed"
-                            ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400"
-                            : b.status === "Pending"
-                              ? "bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400"
-                              : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                        className={`inline-block rounded-md border px-2 py-1 text-[10px] font-semibold ${
+                          booking.status === "Confirmed"
+                            ? "border-gray-300 bg-gray-100 text-black"
+                            : booking.status === "Pending"
+                              ? "border-gray-200 bg-white text-gray-600"
+                              : "border-gray-200 bg-gray-50 text-gray-400"
                         }`}
                       >
-                        {b.status}
+                        {booking.status}
                       </span>
                     </td>
                   </tr>
@@ -378,51 +440,36 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Quick Check list */}
-        <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm space-y-4 dark:bg-zinc-900 dark:border-zinc-800">
+        {/* Tasks and Operations */}
+        <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <div>
-            <h3 className="font-bold text-base text-zinc-900 dark:text-zinc-100">
+            <h3 className="text-base font-bold text-black">
               Tasks & Operations
             </h3>
-            <p className="text-xs text-zinc-400">
+
+            <p className="mt-1 text-xs text-gray-500">
               Daily routine checks for administrators
             </p>
           </div>
 
-          <div className="space-y-3">
-            {[
-              {
-                id: 1,
-                text: "Approve pending agent applications (4)",
-                completed: false,
-              },
-              {
-                id: 2,
-                text: "Moderate user complaints under Reviews",
-                completed: false,
-              },
-              {
-                id: 3,
-                text: "Verify payout batch for early May cycle",
-                completed: true,
-              },
-              {
-                id: 4,
-                text: "Run automated favorites DB backup",
-                completed: true,
-              },
-            ].map((task) => (
+          <div className="space-y-4">
+            {tasks.map((task) => (
               <label
                 key={task.id}
-                className="flex gap-3 items-start cursor-pointer text-xs group"
+                className="group flex cursor-pointer items-start gap-3 text-xs"
               >
                 <input
                   type="checkbox"
                   defaultChecked={task.completed}
-                  className="mt-0.5 accent-rose-500 rounded cursor-pointer"
+                  className="mt-0.5 h-4 w-4 cursor-pointer rounded border-gray-300 accent-black"
                 />
+
                 <span
-                  className={`font-medium ${task.completed ? "line-through text-zinc-400" : "text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100"}`}
+                  className={`font-medium transition-colors ${
+                    task.completed
+                      ? "text-gray-400 line-through"
+                      : "text-gray-700 group-hover:text-black"
+                  }`}
                 >
                   {task.text}
                 </span>
@@ -430,7 +477,7 @@ export default function Dashboard() {
             ))}
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

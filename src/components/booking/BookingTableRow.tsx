@@ -17,34 +17,36 @@ export default function BookingTableRow({
   onUpdateStatus,
 }: BookingTableRowProps) {
   return (
-    <tr className="text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 transition-all">
+    <tr className="bg-white text-zinc-700 hover:bg-zinc-50 transition-colors duration-200">
       {/* Guest Info */}
       <td className="p-4">
-        <span className="font-bold text-zinc-900 dark:text-zinc-100 block">
+        <span className="font-bold text-zinc-900 block">
           {booking.user?.full_name ?? "—"}
         </span>
-        <span className="text-[10px] text-zinc-400 font-mono block">
+
+        <span className="text-[10px] text-zinc-500 font-mono block mt-1">
           {formatBookingId(booking.id)} • {booking.user?.email ?? "—"}
         </span>
       </td>
 
       {/* Property */}
-      <td className="p-4 truncate max-w-[150px] font-bold text-zinc-900 dark:text-zinc-100">
+      <td className="p-4 truncate max-w-[150px] font-bold text-zinc-800">
         {booking.property?.title ?? "—"}
       </td>
 
       {/* Stay Dates */}
-      <td className="p-4 text-zinc-500 dark:text-zinc-400">
-        <div className="flex flex-col">
+      <td className="p-4 text-zinc-600">
+        <div className="flex flex-col gap-1">
           <span>
             In:{" "}
-            <strong className="text-zinc-700 dark:text-zinc-300">
+            <strong className="text-zinc-800 font-semibold">
               {formatDate(booking.check_in)}
             </strong>
           </span>
+
           <span>
             Out:{" "}
-            <strong className="text-zinc-700 dark:text-zinc-300">
+            <strong className="text-zinc-800 font-semibold">
               {formatDate(booking.check_out)}
             </strong>
           </span>
@@ -52,7 +54,7 @@ export default function BookingTableRow({
       </td>
 
       {/* Price */}
-      <td className="p-4 font-extrabold text-zinc-900 dark:text-zinc-100 text-sm">
+      <td className="p-4 font-extrabold text-zinc-900 text-sm">
         {formatPrice(booking.total_price)}
       </td>
 

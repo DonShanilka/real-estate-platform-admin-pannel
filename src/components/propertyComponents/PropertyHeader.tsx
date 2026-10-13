@@ -15,7 +15,7 @@ export default function PropertyHeader({ total, onAddProperty }: Props) {
 
       <button
         onClick={onAddProperty}
-        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl"
+        className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl"
       >
         <Icons.Plus size={16} />
         Add Property

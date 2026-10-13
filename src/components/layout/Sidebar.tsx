@@ -2,21 +2,33 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Icons } from "./Icons";
 import { useState } from "react";
+
+import { Icons } from "./Icons";
 import { useAppDispatch } from "@/src/hooks/useAppDispatch";
 import { logout } from "@/src/redux/features/auth/authSlice";
 
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: Icons.Dashboard },
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    icon: Icons.Dashboard,
+  },
   {
     name: "Property Management",
     href: "/property-management",
     icon: Icons.Properties,
   },
-  { name: "Nearby Map", href: "/nearby-map", icon: Icons.Search },
-  // { name: "Add Property", href: "/add-property", icon: Icons.AddProperty },
-  { name: "User Management", href: "/user-management", icon: Icons.Users },
+  {
+    name: "Nearby Map",
+    href: "/nearby-map",
+    icon: Icons.Search,
+  },
+  {
+    name: "User Management",
+    href: "/user-management",
+    icon: Icons.Users,
+  },
   {
     name: "Booking Management",
     href: "/booking-management",
@@ -40,55 +52,81 @@ const navItems = [
     icon: Icons.Revenue,
   },
   {
-    name: "Chat Support",
-    href: "/chat-support",
-    icon: Icons.Chat,
-    badge: "New",
+    name: "Settings",
+    href: "/settings",
+    icon: Icons.Settings,
   },
-  { name: "Settings", href: "/settings", icon: Icons.Settings },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
+
   const [collapsed, setCollapsed] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("admin_token");
     localStorage.removeItem("token");
+
     dispatch(logout());
+
     router.replace("/auth/login");
   };
 
   return (
     <aside
-      className={`bg-zinc-950 text-zinc-100 flex flex-col border-r border-zinc-800 transition-all duration-300 ${
-        collapsed ? "w-20" : "w-64"
-      } shrink-0 h-screen sticky top-0`}
+      className={`
+        sticky top-0 flex h-screen shrink-0 flex-col
+        border-r border-gray-200 bg-white text-gray-900
+        transition-all duration-300
+        ${collapsed ? "w-20" : "w-64"}
+      `}
     >
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-zinc-800">
+      <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-tr from-amber-500 to-rose-600 flex items-center justify-center font-bold text-white shadow-lg shadow-rose-950/20">
+          <Link
+            href="/dashboard"
+            className="flex min-w-0 items-center gap-3"
+            aria-label="EstateAdmin dashboard"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black text-lg font-bold text-white">
               E
             </div>
-            <span className="font-semibold text-lg bg-linear-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+
+            <span className="truncate text-lg font-bold tracking-tight text-black">
               EstateAdmin
             </span>
-          </div>
+          </Link>
         )}
+
         {collapsed && (
-          <div className="mx-auto w-8 h-8 rounded-lg bg-linear-to-tr from-amber-500 to-rose-600 flex items-center justify-center font-bold text-white shadow-lg">
+          <Link
+            href="/dashboard"
+            className="mx-auto flex h-9 w-9 items-center justify-center rounded-lg bg-black text-lg font-bold text-white"
+            aria-label="EstateAdmin dashboard"
+          >
             E
-          </div>
+          </Link>
         )}
+
         <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors"
+          type="button"
+          onClick={() => setCollapsed((previous) => !previous)}
+          className={`
+            flex h-8 w-8 shrink-0 items-center justify-center
+            rounded-lg text-gray-500
+            transition-colors
+            hover:bg-gray-100 hover:text-black
+            focus-visible:outline-none
+            focus-visible:ring-2 focus-visible:ring-black
+            ${collapsed ? "ml-0" : "ml-2"}
+          `}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={!collapsed}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +138,9 @@ export function Sidebar() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={`transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`}
+            className={`transition-transform duration-300 ${
+              collapsed ? "rotate-180" : ""
+            }`}
           >
             <path d="m15 18-6-6 6-6" />
           </svg>
@@ -108,42 +148,72 @@ export function Sidebar() {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+      <nav
+        aria-label="Admin navigation"
+        className="scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent flex-1 space-y-1 overflow-y-auto p-3"
+      >
+        {!collapsed && (
+          <p className="mb-3 px-3 pt-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+            Main Menu
+          </p>
+        )}
+
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
           const Icon = item.icon;
+
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/dashboard" &&
+              pathname.startsWith(`${item.href}/`));
 
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${
-                isActive
-                  ? "bg-linear-to-r from-rose-600 to-amber-500 text-white shadow-md shadow-rose-950/20"
-                  : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900"
-              }`}
+              aria-current={isActive ? "page" : undefined}
+              title={collapsed ? item.name : undefined}
+              className={`
+                group relative flex items-center gap-3
+                rounded-lg px-3 py-2.5
+                text-sm font-medium
+                transition-colors duration-200
+                focus-visible:outline-none
+                focus-visible:ring-2 focus-visible:ring-black
+                ${
+                  isActive
+                    ? "bg-black text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-black"
+                }
+              `}
             >
               <Icon
-                className={`transition-transform duration-200 group-hover:scale-110 ${
-                  isActive
-                    ? "text-white"
-                    : "text-zinc-400 group-hover:text-zinc-200"
-                }`}
+                className={`
+                  h-5 w-5 shrink-0
+                  transition-colors duration-200
+                  ${
+                    isActive
+                      ? "text-white"
+                      : "text-gray-500 group-hover:text-black"
+                  }
+                `}
               />
 
               {!collapsed && (
-                <span className="flex-1 truncate">{item.name}</span>
+                <span className="min-w-0 flex-1 truncate">{item.name}</span>
               )}
 
               {!collapsed && item.badge && (
                 <span
-                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                    item.badge === "New"
-                      ? "bg-rose-500 text-white"
-                      : isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-zinc-800 text-zinc-400 group-hover:bg-zinc-700"
-                  }`}
+                  className={`
+                    inline-flex min-w-5 items-center justify-center
+                    rounded-md px-1.5 py-0.5
+                    text-[10px] font-bold
+                    ${
+                      isActive
+                        ? "bg-white text-black"
+                        : "bg-gray-100 text-gray-700 group-hover:bg-gray-200"
+                    }
+                  `}
                 >
                   {item.badge}
                 </span>
@@ -151,9 +221,24 @@ export function Sidebar() {
 
               {/* Tooltip when collapsed */}
               {collapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-zinc-900 text-zinc-100 text-xs rounded opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 shadow-md border border-zinc-800 z-50 whitespace-nowrap">
+                <div
+                  className="
+                    pointer-events-none absolute left-full top-1/2 z-50
+                    ml-3 -translate-y-1/2 translate-x-1
+                    whitespace-nowrap rounded-lg
+                    border border-gray-800 bg-gray-950
+                    px-3 py-2 text-xs font-medium text-white
+                    opacity-0 shadow-lg
+                    transition-all duration-150
+                    group-hover:translate-x-0
+                    group-hover:opacity-100
+                  "
+                >
                   {item.name}
-                  {item.badge && ` (${item.badge})`}
+
+                  {item.badge && (
+                    <span className="ml-2 text-gray-300">({item.badge})</span>
+                  )}
                 </div>
               )}
             </Link>
@@ -162,34 +247,57 @@ export function Sidebar() {
       </nav>
 
       {/* User Session Quick Profile */}
-      <div className="p-3 border-t border-zinc-800">
+      <div className="border-t border-gray-200 p-3">
         <div
-          className={`flex items-center gap-3 ${
-            collapsed
-              ? "justify-center"
-              : "px-3 py-2 bg-zinc-900/50 rounded-lg border border-zinc-900"
-          }`}
+          className={`
+            flex items-center gap-3 rounded-lg
+            ${
+              collapsed
+                ? "justify-center"
+                : "border border-gray-200 bg-gray-50 px-3 py-3"
+            }
+          `}
         >
-          <div className="w-8 h-8 rounded-full overflow-hidden border border-rose-500/30 flex items-center justify-center bg-zinc-800 text-xs font-bold text-rose-400 shrink-0">
+          {/* Admin Avatar */}
+          <div
+            className="
+              flex h-9 w-9 shrink-0 items-center justify-center
+              rounded-full border border-gray-300
+              bg-white text-xs font-bold text-black
+            "
+          >
             JD
           </div>
+
           {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-zinc-200 truncate">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-gray-900">
                 Administrator
               </p>
-              <p className="text-[10px] text-zinc-500 truncate">
+
+              <p className="mt-0.5 truncate text-[10px] text-gray-500">
                 Admin account
               </p>
             </div>
           )}
         </div>
+
+        {/* Logout Button */}
         <button
           type="button"
           onClick={handleLogout}
           title={collapsed ? "Log out" : undefined}
           aria-label="Log out"
-          className={`mt-2 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 ${collapsed ? "justify-center" : ""}`}
+          className={`
+            mt-2 flex w-full items-center gap-3
+            rounded-lg px-3 py-2.5
+            text-sm font-medium text-gray-600
+            transition-colors duration-200
+            hover:bg-gray-100 hover:text-black
+            focus-visible:outline-none
+            focus-visible:ring-2 focus-visible:ring-black
+            ${collapsed ? "justify-center" : ""}
+          `}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -202,11 +310,13 @@ export function Sidebar() {
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
+            className="shrink-0"
           >
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />
             <line x1="21" x2="9" y1="12" y2="12" />
           </svg>
+
           {!collapsed && <span>Log out</span>}
         </button>
       </div>

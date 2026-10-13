@@ -30,15 +30,23 @@ export default function PropertyCard({
     return url.trim().replace(/["']/g, "").replace(/\s/g, "");
   }
 
+  // IMPORTANT: Do not convert the image URL to base64.
   const rawImageUrl = normalizeImageUrl(property.image_url);
-
-  // IMPORTANT: do NOT convert to base64 (you are NOT using base64)
   const imageUrl = rawImageUrl || FALLBACK_IMAGE;
 
   const statusConfig: Record<string, { text: string; className: string }> = {
-    AVAILABLE: { text: "Available", className: "bg-emerald-500 text-white" },
-    RENTED: { text: "Rented", className: "bg-amber-500 text-white" },
-    SOLD: { text: "Sold", className: "bg-zinc-700 text-white" },
+    AVAILABLE: {
+      text: "Available",
+      className: "bg-emerald-500 text-white",
+    },
+    RENTED: {
+      text: "Rented",
+      className: "bg-amber-500 text-white",
+    },
+    SOLD: {
+      text: "Sold",
+      className: "bg-zinc-700 text-white",
+    },
   };
 
   const currentStatus = statusConfig[property.status] ?? statusConfig.AVAILABLE;
@@ -55,9 +63,9 @@ export default function PropertyCard({
         : "Emma Watson";
 
   return (
-    <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group dark:bg-zinc-900 dark:border-zinc-800">
+    <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group">
       {/* IMAGE */}
-      <div className="relative h-44 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+      <div className="relative h-44 overflow-hidden bg-white">
         <img
           src={imageUrl}
           alt={property.title}
@@ -90,29 +98,28 @@ export default function PropertyCard({
       </div>
 
       {/* CONTENT */}
-      <div className="p-5 flex flex-col justify-between flex-1">
+      <div className="p-5 flex flex-col justify-between flex-1 bg-white">
         <div>
-          <h3 className="font-bold text-sm line-clamp-1 dark:text-white">
-            {property.title}
-          </h3>
+          <h3 className="font-bold text-sm line-clamp-1">{property.title}</h3>
 
           <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
             {property.address}, {property.city}, {property.district},{" "}
             {property.country}
           </p>
 
+          {/* Property Details */}
           <div className="grid grid-cols-3 gap-2 text-xs text-zinc-500 mt-4">
-            <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2 text-center">
+            <div className="bg-white border border-zinc-100 rounded-lg p-2 text-center">
               <div className="font-semibold">{property.bedrooms}</div>
               <div>Bedrooms</div>
             </div>
 
-            <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2 text-center">
+            <div className="bg-white border border-zinc-100 rounded-lg p-2 text-center">
               <div className="font-semibold">{property.bathrooms}</div>
               <div>Bathrooms</div>
             </div>
 
-            <div className="bg-zinc-50 dark:bg-zinc-800 rounded-lg p-2 text-center">
+            <div className="bg-white border border-zinc-100 rounded-lg p-2 text-center">
               <div className="font-semibold">{property.area_size}</div>
               <div>Sqft</div>
             </div>
@@ -129,6 +136,7 @@ export default function PropertyCard({
             <div className="w-7 h-7 rounded-full bg-zinc-200 flex items-center justify-center text-xs font-bold">
               {agentName.slice(0, 2)}
             </div>
+
             <span className="text-xs text-zinc-600">{agentName}</span>
           </div>
 

@@ -16,7 +16,7 @@ import ModalFooter from "../ui/from/ModalFooter";
 interface PropertyFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  property: Property | null; // Null means creating, otherwise updating
+  property: Property | null;
   onSave: (property: Property) => void;
 }
 
@@ -47,6 +47,7 @@ export function PropertyFormModal({
   const [formData, setFormData] = useState(defaultFormData);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+
   const isEdit = Boolean(property?.id);
 
   useEffect(() => {
@@ -83,6 +84,7 @@ export function PropertyFormModal({
     >,
   ) => {
     const { name, value } = e.target;
+
     const numberFields = [
       "price",
       "bedrooms",
@@ -92,69 +94,75 @@ export function PropertyFormModal({
       "longitude",
       "owner_id",
     ];
-    const coordinateField = name === "latitude" || name === "longitude";
+
+    const coordinateField =
+      name === "latitude" || name === "longitude";
+
     setFormData((prev) => ({
       ...prev,
       [name]: coordinateField
-        ? value.trim() === "" ? null : parseFloat(value)
-        : numberFields.includes(name) ? parseFloat(value) || 0 : value,
+        ? value.trim() === ""
+          ? null
+          : parseFloat(value)
+        : numberFields.includes(name)
+          ? parseFloat(value) || 0
+          : value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const data = new FormData();
+    const data = new FormData();
 
-  data.append("title", formData.title);
-  data.append("description", formData.description);
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("price", String(formData.price));
 
-  data.append("price", String(formData.price));
+    data.append("property_type", formData.property_type);
+    data.append("status", formData.status);
 
-  data.append("property_type", formData.property_type);
-  data.append("status", formData.status);
+    data.append("bedrooms", String(formData.bedrooms));
+    data.append("bathrooms", String(formData.bathrooms));
+    data.append("area_size", String(formData.area_size));
 
-  data.append("bedrooms", String(formData.bedrooms));
-  data.append("bathrooms", String(formData.bathrooms));
-  data.append("area_size", String(formData.area_size));
+    data.append("address", formData.address);
+    data.append("city", formData.city);
+    data.append("district", formData.district);
+    data.append("country", formData.country);
 
-  data.append("address", formData.address);
-  data.append("city", formData.city);
-  data.append("district", formData.district);
-  data.append("country", formData.country);
+    if (formData.latitude !== null && formData.longitude !== null) {
+      data.append("latitude", String(formData.latitude));
+      data.append("longitude", String(formData.longitude));
+    }
 
-  if (formData.latitude !== null && formData.longitude !== null) {
-    data.append("latitude", String(formData.latitude));
-    data.append("longitude", String(formData.longitude));
-  }
+    data.append("owner_id", String(formData.owner_id));
 
-  data.append("owner_id", String(formData.owner_id));
+    if (imageFile) {
+      data.append("image", imageFile);
+    }
 
-  if (imageFile) {
-    data.append("image", imageFile);
-  }
+    if (videoFile) {
+      data.append("video", videoFile);
+    }
 
-  if (videoFile) {
-    data.append("video", videoFile);
-  }
+    onSave(data as any);
 
-  onSave(data as any);
+    for (const pair of data.entries()) {
+      console.log(pair[0], pair[1]);
+    }
 
-  for (const pair of data.entries()) {
-  console.log(pair[0], pair[1]);
-}
+    console.log("IMAGE FILE:", imageFile);
+    console.log("VIDEO FILE:", videoFile);
 
-  console.log("IMAGE FILE:", imageFile);
-console.log("VIDEO FILE:", videoFile);
-
-console.log(imageFile instanceof File);
-console.log(videoFile instanceof File);
-};
+    console.log(imageFile instanceof File);
+    console.log(videoFile instanceof File);
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-white border border-zinc-200 rounded-3xl w-full max-w-2xl shadow-2xl relative overflow-hidden dark:bg-zinc-900 dark:border-zinc-800 animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-        {/* Header visual details */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl animate-in zoom-in-95 duration-200">
+        {/* Header */}
         <ModalHeader
           title={
             property ? "Update Property Listing" : "Register Property Listing"
@@ -167,16 +175,17 @@ console.log(videoFile instanceof File);
           onClose={onClose}
         />
 
-        {/* Scrollable form content */}
+        {/* Scrollable Form Content */}
         <form
           onSubmit={handleSubmit as any}
-          className="flex-1 overflow-y-auto p-6 space-y-6"
+          className="flex-1 space-y-6 overflow-y-auto bg-white p-6"
         >
           {/* General Information */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
               1. General Details
             </h4>
+
             <Input
               label="Property Title"
               type="text"
@@ -196,7 +205,7 @@ console.log(videoFile instanceof File);
               placeholder="Narrative summary highlighting unique features, sights..."
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Input
                 label="Price ($)"
                 type="number"
@@ -233,11 +242,11 @@ console.log(videoFile instanceof File);
             </div>
           </div>
 
-          <div className="w-full h-px bg-zinc-150 dark:bg-zinc-800"></div>
+          <div className="h-px w-full bg-zinc-200" />
 
-          {/* Location details */}
+          {/* Location Details */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
               2. Address & Geolocation
             </h4>
 
@@ -251,7 +260,7 @@ console.log(videoFile instanceof File);
               placeholder="e.g. 102 Ocean Drive"
             />
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <Input
                 label="City"
                 type="text"
@@ -310,14 +319,15 @@ console.log(videoFile instanceof File);
             </div>
           </div>
 
-          <div className="w-full h-px bg-zinc-150 dark:bg-zinc-800"></div>
+          <div className="h-px w-full bg-zinc-200" />
 
-          {/* Size & details */}
+          {/* Size and Details */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
               3. Size & Capacity Parameters
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Input
                 label="Bedrooms"
                 type="number"
@@ -347,15 +357,14 @@ console.log(videoFile instanceof File);
             </div>
           </div>
 
-          <div className="w-full h-px bg-zinc-150 dark:bg-zinc-800"></div>
+          <div className="h-px w-full bg-zinc-200" />
 
-          {/* Media Links */}
+          {/* Media Uploads */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
               4. Media Uploads
             </h4>
 
-            {/* IMAGE */}
             <FileInput
               label="Property Image"
               accept="image/*"
@@ -374,12 +383,14 @@ console.log(videoFile instanceof File);
           </div>
         </form>
 
-        {/* Footer controls action */}
-        <ModalFooter
-          onClose={onClose as any}
-          onSubmit={handleSubmit as any}
-          submitText="Save Listing"
-        />
+        {/* Footer */}
+        <div className="border-t border-zinc-200 bg-white">
+          <ModalFooter
+            onClose={onClose as any}
+            onSubmit={handleSubmit as any}
+            submitText="Save Listing"
+          />
+        </div>
       </div>
     </div>
   );
