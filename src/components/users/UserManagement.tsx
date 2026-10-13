@@ -87,7 +87,7 @@ export default function UserManagement() {
   ];
 
   return (
-    <div className="mx-auto w-full animate-in space-y-4 fade-in duration-300">
+    <div className="mx-auto w-full overflow-hidden animate-in space-y-6 fade-in duration-300">
       {/* Page Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* <div>

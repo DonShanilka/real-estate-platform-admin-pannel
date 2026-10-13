@@ -19,17 +19,19 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-white font-sans text-black">
+    <div className="flex h-dvh w-screen overflow-hidden bg-white font-sans text-black">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Application */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-white">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white">
         {/* Header */}
-        <Header />
+        <div className="shrink-0">
+          <Header />
+        </div>
 
         {/* Route Content */}
-        <main className="flex-1 overflow-y-auto bg-white p-5 text-black sm:p-6 lg:p-8">
+        <main className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white px-5 py-3 text-black sm:px-6 lg:px-8">
           {children}
         </main>
       </div>
