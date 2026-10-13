@@ -80,29 +80,29 @@ export const propertyApi = {
     return await response.json();
   },
 
-  async updateProperty(
-  id: number,
-  propertyData: FormData
-) {
-  const response = await fetch(
-    `${BASE_URL}/properties/updateProperty/${id}`,
-    {
-      method: "PUT",
-      body: propertyData,
+  async updateProperty(id: number, propertyData: FormData) {
+    const response = await fetch(
+      `${BASE_URL}/properties/updateProperty/${id}`,
+      {
+        method: "PUT",
+        body: propertyData,
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update property");
     }
-  );
 
-  if (!response.ok) {
-    throw new Error("Failed to update property");
-  }
-
-  return await response.json();
-},
+    return await response.json();
+  },
 
   async deleteProperty(id: number) {
-    const response = await fetch(`${BASE_URL}/properties/deleteProperty/${id}`, {
-      method: "DELETE",
-    });
+    const response = await fetch(
+      `${BASE_URL}/properties/deleteProperty/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
 
     if (!response.ok) {
       const error = await response.json().catch(() => null);
