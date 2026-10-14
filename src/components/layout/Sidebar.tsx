@@ -41,11 +41,11 @@ const navItems = [
     icon: Icons.Reviews,
     badge: "3",
   },
-  {
-    name: "Favorites Analytics",
-    href: "/favorites-analytics",
-    icon: Icons.Favorites,
-  },
+  // {
+  //   name: "Favorites Analytics",
+  //   href: "/favorites-analytics",
+  //   icon: Icons.Favorites,
+  // },
   {
     name: "Revenue Analytics",
     href: "/revenue-analytics",
