@@ -34,9 +34,7 @@ const markerIcon = L.divIcon({
   iconAnchor: [13, 13],
 });
 
-function MapEvents({
-  onCenterChange,
-}: Pick<Props, "onCenterChange">) {
+function MapEvents({ onCenterChange }: Pick<Props, "onCenterChange">) {
   const map = useMapEvents({
     moveend() {
       const center = map.getCenter();
@@ -48,11 +46,7 @@ function MapEvents({
   return null;
 }
 
-function RecenterMap({
-  center,
-}: {
-  center: [number, number];
-}) {
+function RecenterMap({ center }: { center: [number, number] }) {
   const map = useMap();
 
   useEffect(() => {
@@ -82,13 +76,10 @@ export default function NearbyPropertiesMap({
 }: Props) {
   const [tilesLoaded, setTilesLoaded] = useState(true);
 
-  const radiusMeters = useMemo(
-    () => radiusKm * 1000,
-    [radiusKm],
-  );
+  const radiusMeters = useMemo(() => radiusKm * 1000, [radiusKm]);
 
   return (
-    <div className="relative h-[420px] w-full min-h-0 overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl shadow-zinc-200/60">
+    <div className="relative h-[680px] min-h-0 w-full overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl shadow-zinc-200/60">
       {/* MAP */}
       <MapContainer
         center={center}
@@ -128,20 +119,14 @@ export default function NearbyPropertiesMap({
 
         {/* PROPERTY MARKERS */}
         {properties.map(({ property, distance_km }) => {
-          if (
-            property.latitude == null ||
-            property.longitude == null
-          ) {
+          if (property.latitude == null || property.longitude == null) {
             return null;
           }
 
           return (
             <Marker
               key={property.id}
-              position={[
-                property.latitude,
-                property.longitude,
-              ]}
+              position={[property.latitude, property.longitude]}
               icon={markerIcon}
               eventHandlers={{
                 click: () => onSelectProperty(property),
@@ -149,9 +134,7 @@ export default function NearbyPropertiesMap({
             >
               <Popup>
                 <div className="min-w-44 bg-white">
-                  <p className="font-semibold">
-                    {property.title}
-                  </p>
+                  <p className="font-semibold">{property.title}</p>
 
                   <p className="text-sm text-zinc-600">
                     {property.city || property.address}
