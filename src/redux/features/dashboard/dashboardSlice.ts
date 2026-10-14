@@ -19,6 +19,7 @@ const initialState: DashboardState = {
   selectedPeriod: "monthly",
   loading: false,
   error: null,
+  errors: [],
   lastUpdated: null,
 };
 
@@ -27,19 +28,26 @@ const dashboardSlice = createSlice({
   initialState,
 
   reducers: {
-    setDashboardPeriod(state, action: PayloadAction<DashboardPeriod>) {
+    setDashboardPeriod(
+      state,
+      action: PayloadAction<DashboardPeriod>,
+    ) {
       state.selectedPeriod = action.payload;
     },
+
     clearDashboardError(state) {
       state.error = null;
     },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchDashboardData.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.errors = [];
       })
+
       .addCase(fetchDashboardData.fulfilled, (state, action) => {
         state.loading = false;
 
@@ -49,15 +57,21 @@ const dashboardSlice = createSlice({
           favorites: action.payload.favorites,
         };
 
+        state.errors = action.payload.errors;
         state.lastUpdated = new Date().toISOString();
       })
+
       .addCase(fetchDashboardData.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ?? "Unable to load dashboard data.";
+        state.error =
+          action.payload ?? "Unable to load dashboard data.";
       });
   },
 });
 
-export const { setDashboardPeriod, clearDashboardError } =
-  dashboardSlice.actions;
+export const {
+  setDashboardPeriod,
+  clearDashboardError,
+} = dashboardSlice.actions;
+
 export default dashboardSlice.reducer;

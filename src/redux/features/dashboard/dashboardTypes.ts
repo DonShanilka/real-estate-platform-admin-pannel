@@ -80,3 +80,7 @@ export interface DashboardSummary {
     count: number;
   }[];
 }
+
+export interface DashboardFetchResult extends DashboardData {
+  errors: string[];
+}

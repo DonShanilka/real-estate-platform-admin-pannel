@@ -4,7 +4,7 @@ import { dashboardApi } from "../../../lib/api/dashboardApi";
 
 import type {
   Booking,
-  DashboardData,
+  DashboardFetchResult,
   Favorite,
   Property,
 } from "./dashboardTypes";
@@ -16,7 +16,7 @@ function getErrorMessage(error: unknown): string {
 }
 
 export const fetchDashboardData = createAsyncThunk<
-  DashboardData,
+  DashboardFetchResult,
   void,
   { rejectValue: string }
 >("dashboard/fetchDashboardData", async (_, { rejectWithValue }) => {
@@ -27,42 +27,41 @@ export const fetchDashboardData = createAsyncThunk<
       dashboardApi.getFavorites(),
     ]);
 
-    const propertiesResult = results[0];
-    const bookingsResult = results[1];
-    const favoritesResult = results[2];
-
-    const errors: string[] = [];
-
     let properties: Property[] = [];
     let bookings: Booking[] = [];
     let favorites: Favorite[] = [];
 
-    if (propertiesResult.status === "fulfilled") {
-      properties = propertiesResult.value;
+    const errors: string[] = [];
+
+    if (results[0].status === "fulfilled") {
+      properties = results[0].value;
     } else {
-      errors.push(`Properties: ${getErrorMessage(propertiesResult.reason)}`);
+      errors.push(`Properties: ${getErrorMessage(results[0].reason)}`);
     }
 
-    if (bookingsResult.status === "fulfilled") {
-      bookings = bookingsResult.value;
+    if (results[1].status === "fulfilled") {
+      bookings = results[1].value;
     } else {
-      errors.push(`Bookings: ${getErrorMessage(bookingsResult.reason)}`);
+      errors.push(`Bookings: ${getErrorMessage(results[1].reason)}`);
     }
 
-    if (favoritesResult.status === "fulfilled") {
-      favorites = favoritesResult.value;
+    if (results[2].status === "fulfilled") {
+      favorites = results[2].value;
     } else {
-      errors.push(`Favorites: ${getErrorMessage(favoritesResult.reason)}`);
+      errors.push(`Favorites: ${getErrorMessage(results[2].reason)}`);
     }
 
-    // Keep the dashboard useful when one endpoint fails.
-    // Show a warning instead of silently treating failed data as zero.
+    // Reject only if every endpoint fails.
+    if (errors.length === 3) {
+      return rejectWithValue(errors.join(" | "));
+    }
+
     return {
       properties,
       bookings,
       favorites,
       errors,
-    } as DashboardData & { errors: string[] };
+    };
   } catch (error) {
     return rejectWithValue(getErrorMessage(error));
   }
