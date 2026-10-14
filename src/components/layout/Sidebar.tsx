@@ -51,11 +51,11 @@ const navItems = [
     href: "/revenue-analytics",
     icon: Icons.Revenue,
   },
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Icons.Settings,
-  },
+  // {
+  //   name: "Settings",
+  //   href: "/settings",
+  //   icon: Icons.Settings,
+  // },
 ];
 
 export function Sidebar() {
