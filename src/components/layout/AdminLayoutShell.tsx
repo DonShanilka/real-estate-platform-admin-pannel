@@ -30,7 +30,7 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
           <Header />
         </div>
 
-        {/* Route Content */}
+        {/* Scrollable Route Content */}
         <main className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white px-5 py-3 text-black sm:px-6 lg:px-8">
           {children}
         </main>

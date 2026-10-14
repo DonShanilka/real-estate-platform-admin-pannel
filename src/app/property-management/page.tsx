@@ -83,9 +83,17 @@ export default function PropertyManagement() {
   };
 
   return (
-    <div className="space-y-6">
-      <PropertyHeader total={properties.length} onAddProperty={handleCreate} />
+    <div className="flex h-full min-h-0 flex-col gap-6 overflow-hidden">
+    {/* Fixed Header */}
+    <div className="shrink-0">
+      <PropertyHeader
+        total={properties.length}
+        onAddProperty={handleCreate}
+      />
+    </div>
 
+    {/* Fixed Filters */}
+    <div className="shrink-0">
       <PropertyFilters
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -94,7 +102,10 @@ export default function PropertyManagement() {
         categoryFilter={categoryFilter}
         setCategoryFilter={setCategoryFilter}
       />
+    </div>
 
+    {/* Scrollable Property Area */}
+    <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4">
       {loading ? (
         <PropertyLoading />
       ) : filteredProperties.length > 0 ? (
@@ -112,16 +123,18 @@ export default function PropertyManagement() {
           }}
         />
       )}
-
-      <PropertyFormModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingProperty(null);
-        }}
-        property={editingProperty}
-        onSave={handleSave as any}
-      />
     </div>
+
+    {/* Modal */}
+    <PropertyFormModal
+      isOpen={isModalOpen}
+      onClose={() => {
+        setIsModalOpen(false);
+        setEditingProperty(null);
+      }}
+      property={editingProperty}
+      onSave={handleSave as any}
+    />
+  </div>
   );
 }
