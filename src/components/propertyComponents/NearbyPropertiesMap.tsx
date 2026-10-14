@@ -11,6 +11,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
+
 import type { Property } from "@/src/types/propertyTypes";
 
 interface NearbyProperty {
@@ -33,10 +34,13 @@ const markerIcon = L.divIcon({
   iconAnchor: [13, 13],
 });
 
-function MapEvents({ onCenterChange }: Pick<Props, "onCenterChange">) {
+function MapEvents({
+  onCenterChange,
+}: Pick<Props, "onCenterChange">) {
   const map = useMapEvents({
     moveend() {
       const center = map.getCenter();
+
       onCenterChange([center.lat, center.lng]);
     },
   });
@@ -44,7 +48,11 @@ function MapEvents({ onCenterChange }: Pick<Props, "onCenterChange">) {
   return null;
 }
 
-function RecenterMap({ center }: { center: [number, number] }) {
+function RecenterMap({
+  center,
+}: {
+  center: [number, number];
+}) {
   const map = useMap();
 
   useEffect(() => {
@@ -57,7 +65,9 @@ function RecenterMap({ center }: { center: [number, number] }) {
       return;
     }
 
-    map.setView(center, map.getZoom(), { animate: true });
+    map.setView(center, map.getZoom(), {
+      animate: true,
+    });
   }, [center, map]);
 
   return null;
@@ -72,17 +82,22 @@ export default function NearbyPropertiesMap({
 }: Props) {
   const [tilesLoaded, setTilesLoaded] = useState(true);
 
-  const radiusMeters = useMemo(() => radiusKm * 1000, [radiusKm]);
+  const radiusMeters = useMemo(
+    () => radiusKm * 1000,
+    [radiusKm],
+  );
 
   return (
-    <div className="relative h-full min-h-[520px] overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl shadow-zinc-200/60">
+    <div className="relative h-[420px] w-full min-h-0 overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-xl shadow-zinc-200/60">
+      {/* MAP */}
       <MapContainer
         center={center}
         zoom={12}
         scrollWheelZoom
-        className="z-0 h-full min-h-[520px] w-full"
+        className="z-0 h-full w-full"
         zoomControl={false}
       >
+        {/* MAP TILES */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -92,10 +107,13 @@ export default function NearbyPropertiesMap({
           }}
         />
 
+        {/* MAP EVENTS */}
         <MapEvents onCenterChange={onCenterChange} />
 
+        {/* UPDATE MAP CENTER */}
         <RecenterMap center={center} />
 
+        {/* SEARCH RADIUS */}
         <Circle
           center={center}
           radius={radiusMeters}
@@ -108,15 +126,22 @@ export default function NearbyPropertiesMap({
           }}
         />
 
+        {/* PROPERTY MARKERS */}
         {properties.map(({ property, distance_km }) => {
-          if (property.latitude == null || property.longitude == null) {
+          if (
+            property.latitude == null ||
+            property.longitude == null
+          ) {
             return null;
           }
 
           return (
             <Marker
               key={property.id}
-              position={[property.latitude, property.longitude]}
+              position={[
+                property.latitude,
+                property.longitude,
+              ]}
               icon={markerIcon}
               eventHandlers={{
                 click: () => onSelectProperty(property),
@@ -124,14 +149,16 @@ export default function NearbyPropertiesMap({
             >
               <Popup>
                 <div className="min-w-44 bg-white">
-                  <p className="font-semibold">{property.title}</p>
+                  <p className="font-semibold">
+                    {property.title}
+                  </p>
 
                   <p className="text-sm text-zinc-600">
                     {property.city || property.address}
                   </p>
 
                   <p className="mt-1 text-sm font-bold text-rose-600">
-                    ${property.price.toLocaleString()}
+                    ${Number(property.price ?? 0).toLocaleString()}
                   </p>
 
                   <p className="text-xs text-zinc-500">
@@ -144,6 +171,7 @@ export default function NearbyPropertiesMap({
         })}
       </MapContainer>
 
+      {/* SEARCH AREA LABEL */}
       <div className="pointer-events-none absolute left-4 top-4 z-[1000] rounded-2xl border border-zinc-200 bg-white px-4 py-3 shadow-lg backdrop-blur">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
           Search area
@@ -154,6 +182,7 @@ export default function NearbyPropertiesMap({
         </p>
       </div>
 
+      {/* LOADING OVERLAY */}
       {!tilesLoaded && (
         <div className="pointer-events-none absolute inset-0 z-[900] grid place-items-center bg-white/50 text-sm font-medium text-zinc-600 backdrop-blur-[1px]">
           Loading map tiles…

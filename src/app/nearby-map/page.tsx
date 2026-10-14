@@ -39,11 +39,7 @@ export default function NearbyMapPage() {
       setError(null);
 
       try {
-        const results = await propertyApi.getNearbyProperties(
-          lat,
-          lng,
-          radius,
-        );
+        const results = await propertyApi.getNearbyProperties(lat, lng, radius);
 
         setNearby(results);
         setSelected(null);
@@ -76,10 +72,7 @@ export default function NearbyMapPage() {
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        const next: [number, number] = [
-          coords.latitude,
-          coords.longitude,
-        ];
+        const next: [number, number] = [coords.latitude, coords.longitude];
 
         setCenter(next);
         void searchNearby(next[0], next[1], radiusKm);
@@ -128,7 +121,6 @@ export default function NearbyMapPage() {
           <div className="flex flex-wrap items-end gap-3">
             <label className="grid gap-1.5 text-xs font-semibold text-zinc-700">
               Search radius
-
               <select
                 value={radiusKm}
                 onChange={(event) => {
@@ -184,9 +176,7 @@ export default function NearbyMapPage() {
 
           <button
             type="button"
-            onClick={() =>
-              void searchNearby(center[0], center[1], radiusKm)
-            }
+            onClick={() => void searchNearby(center[0], center[1], radiusKm)}
             disabled={loading}
             className="absolute bottom-5 left-1/2 z-[1000] -translate-x-1/2 rounded-full border border-black bg-black px-5 py-3 text-sm font-bold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
