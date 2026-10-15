@@ -1,310 +1,225 @@
 "use client";
 
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 
-export default function RevenueAnalytics() {
-  const [selectedRange, setSelectedRange] = useState("Month-to-Date");
+import PaymentsHeader from "@/src/components/payments/PaymentsHeader";
+import PaymentSummaryCards from "@/src/components/payments/PaymentSummaryCards";
+import PaymentToolbar from "@/src/components/payments/PaymentToolbar";
+import PaymentTable from "@/src/components/payments/PaymentTable";
+import PaymentFormModal from "@/src/components/payments/PaymentFormModal";
+import DeletePaymentModal from "@/src/components/payments/DeletePaymentModal";
+import PaymentsLoading from "@/src/components/payments/PaymentsLoading";
+import PaymentsEmptyState from "@/src/components/payments/PaymentsEmptyState";
 
-  const finances = [
-    {
-      label: "Gross Platform Volume",
-      value: "$1,248,500",
-      change: "+16.8%",
-      isPositive: true,
-    },
-    {
-      label: "Net Platform Commission (5%)",
-      value: "$62,425",
-      change: "+16.8%",
-      isPositive: true,
-    },
-    {
-      label: "Paid Out Commissions",
-      value: "$48,900",
-      change: "+12.4%",
-      isPositive: true,
-    },
-    {
-      label: "Pending Agent Balances",
-      value: "$13,525",
-      change: "-2.4%",
-      isPositive: false,
-    },
-  ];
+import { usePayments } from "@/src/hooks/usePayments";
 
-  const transactions = [
-    {
-      id: "TXN-9021",
-      user: "Sarah Jenkins",
-      role: "Agent",
-      type: "Commission Payout",
-      amount: "$3,450",
-      date: "May 20, 2026",
-      status: "Completed",
-    },
-    {
-      id: "TXN-9022",
-      user: "Michael Chen",
-      role: "Buyer",
-      type: "Booking Deposit",
-      amount: "$1,200",
-      date: "May 19, 2026",
-      status: "Completed",
-    },
-    {
-      id: "TXN-9023",
-      user: "Alex Rivera",
-      role: "Agent",
-      type: "Commission Payout",
-      amount: "$5,120",
-      date: "May 18, 2026",
-      status: "Pending",
-    },
-    {
-      id: "TXN-9024",
-      user: "Emma Watson",
-      role: "Agent",
-      type: "Commission Payout",
-      amount: "$2,400",
-      date: "May 18, 2026",
-      status: "Completed",
-    },
-    {
-      id: "TXN-9025",
-      user: "Robert Downey",
-      role: "Seller",
-      type: "Listing Promotion Fee",
-      amount: "$150",
-      date: "May 17, 2026",
-      status: "Completed",
-    },
-  ];
+import type { Payment, PaymentCreate } from "@/src/types/paymentTypes";
 
-  const categorySplit = [
-    {
-      name: "Penthouses",
-      amount: "$450,200",
-      percentage: 36,
-      color: "bg-rose-500",
-    },
-    {
-      name: "Villas",
-      amount: "$380,400",
-      percentage: 30,
-      color: "bg-amber-500",
-    },
-    {
-      name: "Apartments",
-      amount: "$250,900",
-      percentage: 20,
-      color: "bg-indigo-500",
-    },
-    {
-      name: "Houses",
-      amount: "$167,000",
-      percentage: 14,
-      color: "bg-emerald-500",
-    },
-  ];
+export default function PaymentsPage() {
+  const {
+    payments,
+    loading,
+    refreshing,
+    saving,
+    deleting,
+    error,
+    notice,
+    setError,
+    setNotice,
+    fetchPayments,
+    savePayment,
+    removePayment,
+  } = usePayments();
+
+  const [search, setSearch] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+
+  const [paymentToDelete, setPaymentToDelete] = useState<Payment | null>(null);
+
+  const filteredPayments = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+
+    return payments.filter((payment) => {
+      const matchesSearch =
+        !normalizedSearch ||
+        [
+          String(payment.id),
+          String(payment.user_id),
+          String(payment.booking_id),
+          payment.transaction_id ?? "",
+          payment.payment_method,
+          payment.status,
+          payment.currency,
+          String(payment.amount),
+        ].some((value) => value.toLowerCase().includes(normalizedSearch));
+
+      const matchesStatus =
+        selectedStatus === "all" ||
+        payment.status.toLowerCase() === selectedStatus;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [payments, search, selectedStatus]);
+
+  function openCreateModal() {
+    setSelectedPayment(null);
+    setError(null);
+    setNotice(null);
+    setFormOpen(true);
+  }
+
+  function openEditModal(payment: Payment) {
+    setSelectedPayment(payment);
+    setError(null);
+    setNotice(null);
+    setFormOpen(true);
+  }
+
+  function closeFormModal() {
+    if (saving) return;
+
+    setFormOpen(false);
+    setSelectedPayment(null);
+  }
+
+  async function handleSave(data: PaymentCreate, paymentId?: number) {
+    await savePayment(data, paymentId);
+
+    setFormOpen(false);
+    setSelectedPayment(null);
+  }
+
+  async function handleDelete() {
+    if (!paymentToDelete) return;
+
+    try {
+      await removePayment(paymentToDelete.id);
+      setPaymentToDelete(null);
+    } catch {
+      // The hook exposes the error message in the page.
+      // Keep the confirmation modal open so the user can retry.
+    }
+  }
+
+  function clearFilters() {
+    setSearch("");
+    setSelectedStatus("all");
+  }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      {/* Financial Overview Header */}
-      <div className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-zinc-900">
-            Revenue & Financial Analytics
-          </h2>
+    <div className="min-h-full space-y-6 bg-zinc-50/50 pb-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <PaymentsHeader
+        onAddPayment={openCreateModal}
+        onRefresh={() => void fetchPayments(true)}
+        refreshing={refreshing}
+      />
 
-          <p className="mt-1 text-xs text-zinc-600">
-            Track financial ledger entries, gross booking volumes, and platform
-            commission shares.
-          </p>
-        </div>
-
-        {/* Date Range Selector */}
-        <div className="flex flex-wrap items-center gap-1 self-start rounded-lg border border-zinc-200 bg-zinc-50 p-1 sm:self-auto">
-          {["Month-to-Date", "Quarter-to-Date", "Year-to-Date"].map((range) => (
-            <button
-              key={range}
-              type="button"
-              onClick={() => setSelectedRange(range)}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-all ${
-                selectedRange === range
-                  ? "bg-zinc-900 text-white shadow-sm"
-                  : "text-zinc-600 hover:bg-white hover:text-zinc-900"
-              }`}
-            >
-              {range}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Financial Metrics */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {finances.map((item, index) => (
-          <div
-            key={index}
-            className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300 hover:shadow-md"
-          >
-            <span className="block text-xs font-semibold uppercase tracking-wider text-zinc-600">
-              {item.label}
-            </span>
-
-            <div className="mt-2 flex flex-wrap items-baseline gap-2">
-              <span className="text-2xl font-extrabold text-zinc-950">
-                {item.value}
-              </span>
-
-              <span
-                className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
-                  item.isPositive
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "bg-rose-50 text-rose-700"
-                }`}
-              >
-                {item.change}
-              </span>
-            </div>
-
-            <span className="mt-2 block text-[10px] text-zinc-500">
-              Audit verified ledger
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Revenue Chart and Transactions */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Revenue by Property Category */}
-        <div className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+      {error && (
+        <div
+          role="alert"
+          className="flex flex-col gap-3 rounded-xl border border-rose-200 bg-rose-50 
+          px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+        >
           <div>
-            <h3 className="text-base font-bold text-zinc-900">
-              Revenue Yield by Typology
-            </h3>
+            <p className="text-xs font-bold text-rose-800">Request failed</p>
 
-            <p className="mt-1 text-xs text-zinc-600">
-              Typology contribution to platform yield
-            </p>
+            <p className="mt-1 text-xs leading-5 text-rose-700">{error}</p>
           </div>
 
-          <div className="space-y-4 pt-2">
-            {categorySplit.map((category) => (
-              <div key={category.name} className="space-y-1.5">
-                <div className="flex justify-between gap-3 text-xs font-bold text-zinc-800">
-                  <span>{category.name}</span>
-
-                  <span className="text-right">
-                    {category.amount} ({category.percentage}%)
-                  </span>
-                </div>
-
-                {/* Revenue Progress Bar */}
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-zinc-100">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${category.color}`}
-                    style={{ width: `${category.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            className="self-start text-xs font-semibold text-rose-700 hover:underline sm:self-auto"
+          >
+            Dismiss
+          </button>
         </div>
+      )}
 
-        {/* Financial Transactions Table */}
-        <div className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm lg:col-span-2">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h3 className="text-base font-bold text-zinc-900">
-                Recent Financial Operations
-              </h3>
+      {notice && (
+        <div
+          role="status"
+          className="flex items-center justify-between gap-3 rounded-xl border 
+          border-emerald-200 bg-emerald-50 px-4 py-3"
+        >
+          <p className="text-xs font-medium text-emerald-800">{notice}</p>
 
-              <p className="mt-1 text-xs text-zinc-600">
-                Commission payouts and deposits audit ledger
-              </p>
-            </div>
-
-            <button
-              type="button"
-              className="self-start text-xs font-semibold text-rose-600 transition-colors hover:text-rose-700 hover:underline sm:self-auto"
-            >
-              Download Audit PDF
-            </button>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left text-xs">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50 text-[9px] font-bold uppercase tracking-wider text-zinc-600">
-                  <th className="whitespace-nowrap px-3 py-3">TXN ID</th>
-
-                  <th className="whitespace-nowrap px-3 py-3">User</th>
-
-                  <th className="whitespace-nowrap px-3 py-3">Type</th>
-
-                  <th className="whitespace-nowrap px-3 py-3">Date</th>
-
-                  <th className="whitespace-nowrap px-3 py-3 text-right">
-                    Amount
-                  </th>
-
-                  <th className="whitespace-nowrap px-3 py-3 text-right">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-zinc-100">
-                {transactions.map((transaction) => (
-                  <tr
-                    key={transaction.id}
-                    className="text-zinc-700 transition-colors hover:bg-zinc-50"
-                  >
-                    <td className="whitespace-nowrap px-3 py-3 font-mono text-zinc-500">
-                      {transaction.id}
-                    </td>
-
-                    <td className="whitespace-nowrap px-3 py-3">
-                      <span className="font-bold text-zinc-900">
-                        {transaction.user}
-                      </span>
-
-                      <span className="ml-1 text-[10px] font-medium text-zinc-500">
-                        ({transaction.role})
-                      </span>
-                    </td>
-
-                    <td className="whitespace-nowrap px-3 py-3 text-zinc-600">
-                      {transaction.type}
-                    </td>
-
-                    <td className="whitespace-nowrap px-3 py-3 text-zinc-500">
-                      {transaction.date}
-                    </td>
-
-                    <td className="whitespace-nowrap px-3 py-3 text-right font-bold text-zinc-900">
-                      {transaction.amount}
-                    </td>
-
-                    <td className="whitespace-nowrap px-3 py-3 text-right">
-                      <span
-                        className={`inline-block rounded px-2 py-1 text-[9px] font-bold ${
-                          transaction.status === "Completed"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-amber-50 text-amber-700"
-                        }`}
-                      >
-                        {transaction.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <button
+            type="button"
+            onClick={() => setNotice(null)}
+            className="text-xs font-semibold text-emerald-700 hover:underline"
+          >
+            Dismiss
+          </button>
         </div>
-      </div>
+      )}
+
+      {loading ? (
+        <PaymentsLoading />
+      ) : (
+        <>
+          <PaymentSummaryCards payments={payments} />
+
+          <PaymentToolbar
+            search={search}
+            onSearchChange={setSearch}
+            status={selectedStatus}
+            onStatusChange={setSelectedStatus}
+            total={filteredPayments.length}
+          />
+
+          {filteredPayments.length > 0 ? (
+            <PaymentTable
+              payments={filteredPayments}
+              onEdit={openEditModal}
+              onDelete={(payment) => {
+                setError(null);
+                setPaymentToDelete(payment);
+              }}
+            />
+          ) : (
+            <PaymentsEmptyState
+              search={search}
+              onClear={clearFilters}
+              onAdd={openCreateModal}
+            />
+          )}
+
+          <div
+            className="flex flex-col gap-1 px-1 text-[10px] text-zinc-500 
+          sm:flex-row sm:items-center sm:justify-between"
+          >
+            <span>
+              Displaying {filteredPayments.length} of {payments.length} loaded
+              payment records.
+            </span>
+
+            <span>Payment data is retrieved from the backend API.</span>
+          </div>
+        </>
+      )}
+
+      <PaymentFormModal
+        open={formOpen}
+        payment={selectedPayment}
+        saving={saving}
+        onClose={closeFormModal}
+        onSubmit={handleSave}
+      />
+
+      <DeletePaymentModal
+        payment={paymentToDelete}
+        deleting={deleting}
+        onCancel={() => {
+          if (!deleting) {
+            setPaymentToDelete(null);
+          }
+        }}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
